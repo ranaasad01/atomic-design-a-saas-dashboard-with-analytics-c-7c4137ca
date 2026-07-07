@@ -197,7 +197,7 @@ export default function HomePage() {
   const [activeChart, setActiveChart] = useState<"revenue" | "users">("revenue");
 
   return (
-    <main className="min-h-screen bg-[#0F172A] text-white overflow-x-hidden">
+    <main className="min-h-screen bg-[#0F172A] text-white overflow-x-hidden" style={{ color: "#f59e0b", backgroundColor: "#22c55e" }}>
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
