@@ -283,7 +283,12 @@ export default function HomePage() {
         </div>
       </section>
       {/* ── KPI Cards ────────────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-20" data-atomic-id="av8zm2n">
+      <section
+        className="px-4 sm:px-6 lg:px-8 pb-20"
+        data-atomic-id="av8zm2n"
+        style={{
+          backgroundColor: "#ef4444"
+        }}>
         <motion.div
           initial="hidden"
           whileInView="visible"
