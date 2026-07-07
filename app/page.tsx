@@ -188,17 +188,31 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"revenue" | "users">("revenue");
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1E1B18]">
-
+    <div
+      className="min-h-screen bg-[#FAF7F2] text-[#1E1B18]"
+      data-atomic-id="awjj82s">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+      <section
+        className="relative overflow-hidden pt-32 pb-24 px-4 sm:px-6 lg:px-8"
+        data-atomic-id="a1810xh7">
         {/* Background orbs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-indigo-200/30 blur-[120px]" />
-          <div className="absolute bottom-[-5%] right-[10%] w-[500px] h-[500px] rounded-full bg-cyan-200/25 blur-[100px]" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          data-atomic-id="a1sag5qm">
+          <div
+            className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-indigo-200/30 blur-[120px]"
+            data-atomic-id="at4n0x" />
+          <div
+            className="absolute bottom-[-5%] right-[10%] w-[500px] h-[500px] rounded-full bg-cyan-200/25 blur-[100px]"
+            data-atomic-id="aujh5f" />
         </div>
 
-        <div className="relative max-w-5xl mx-auto text-center">
+        <div
+          className="relative max-w-5xl mx-auto text-center"
+          data-atomic-id="a1sbuzv4"
+          style={{
+            backgroundColor: "#ef4444"
+          }}>
           <motion.div
             initial="hidden"
             animate="visible"
@@ -207,7 +221,9 @@ export default function HomePage() {
           >
             {/* Badge */}
             <motion.div variants={fadeInUp} className="flex justify-center">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100">
+              <span
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100"
+                data-atomic-id="a12l0bka">
                 <Sparkles className="w-3.5 h-3.5" />
                 Now with AI-powered anomaly detection
               </span>
@@ -218,9 +234,11 @@ export default function HomePage() {
               variants={fadeInUp}
               className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08]"
             >
-              <span className="text-[#1E1B18]">Analytics that</span>
-              <br />
-              <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+              <span className="text-[#1E1B18]" data-atomic-id="a1ni7amm">Analytics that</span>
+              <br data-atomic-id="a1p67fqq" />
+              <span
+                className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent"
+                data-atomic-id="a1q3eivm">
                 move with you
               </span>
             </motion.h1>
@@ -258,15 +276,14 @@ export default function HomePage() {
             {/* Social proof */}
             <motion.p variants={fadeInUp} className="text-sm text-[#6B6560]">
               Trusted by{" "}
-              <span className="text-[#1E1B18] font-semibold">2,400+</span> SaaS
+              <span className="text-[#1E1B18] font-semibold" data-atomic-id="a9rw6pv">2,400+</span> SaaS
               teams worldwide
             </motion.p>
           </motion.div>
         </div>
       </section>
-
       {/* ── KPI Cards ────────────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-20">
+      <section className="px-4 sm:px-6 lg:px-8 pb-20" data-atomic-id="av8zm2n">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -274,38 +291,42 @@ export default function HomePage() {
           variants={staggerContainer}
           className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4"
         >
-          {kpis.map((kpi) => (
-            <motion.div
-              key={kpi.label}
-              variants={scaleIn}
-              className="bg-white border border-black/8 shadow-sm rounded-2xl p-5"
-            >
-              <p className="text-xs font-medium text-[#6B6560] uppercase tracking-wider mb-2">
-                {kpi.label}
-              </p>
-              <p className="text-2xl font-bold text-[#1E1B18] mb-2">{kpi.value}</p>
-              <div
-                className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
-                  kpi.change >= 0
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-red-50 text-red-500"
-                }`}
-              >
-                {kpi.change >= 0 ? (
-                  <ArrowUp className="w-3 h-3" />
-                ) : (
-                  <ArrowDown className="w-3 h-3" />
-                )}
-                {Math.abs(kpi.change)}%
-              </div>
-            </motion.div>
-          ))}
+          {kpis.map((kpi, __atomicIdx) => (<motion.div
+            key={kpi.label}
+            variants={scaleIn}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-5"
+          >
+            <p
+              className="text-xs font-medium text-[#6B6560] uppercase tracking-wider mb-2"
+              data-atomic-id="atyeiha"
+              data-atomic-instance={__atomicIdx}>
+              {kpi.label}
+            </p>
+            <p
+              className="text-2xl font-bold text-[#1E1B18] mb-2"
+              data-atomic-id="atyek5s"
+              data-atomic-instance={__atomicIdx}>{kpi.value}</p>
+            <div
+              className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                kpi.change >= 0
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "bg-red-50 text-red-500"
+              }`}
+              data-atomic-id="ail5ax1"
+              data-atomic-instance={__atomicIdx}>
+              {kpi.change >= 0 ? (
+                <ArrowUp className="w-3 h-3" />
+              ) : (
+                <ArrowDown className="w-3 h-3" />
+              )}
+              {Math.abs(kpi.change)}%
+            </div>
+          </motion.div>))}
         </motion.div>
       </section>
-
       {/* ── Charts Preview ───────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-4 sm:px-6 lg:px-8 pb-24" data-atomic-id="ad9lg3u">
+        <div className="max-w-6xl mx-auto" data-atomic-id="a1pp4rqz">
           {/* Tab switcher */}
           <motion.div
             initial="hidden"
@@ -314,21 +335,22 @@ export default function HomePage() {
             variants={fadeInUp}
             className="flex items-center justify-between mb-6"
           >
-            <h2 className="text-xl font-bold text-[#1E1B18]">Performance Overview</h2>
-            <div className="flex items-center gap-1 bg-[#F3EFE8] rounded-xl p-1">
-              {(["revenue", "users"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    activeTab === tab
-                      ? "bg-white text-[#1E1B18] shadow-sm"
-                      : "text-[#6B6560] hover:text-[#1E1B18]"
-                  }`}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))}
+            <h2 className="text-xl font-bold text-[#1E1B18]" data-atomic-id="a82vkgq">Performance Overview</h2>
+            <div
+              className="flex items-center gap-1 bg-[#F3EFE8] rounded-xl p-1"
+              data-atomic-id="a1hl0dnp">
+              {(["revenue", "users"] as const).map((tab, __atomicIdx) => (<button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  activeTab === tab
+                    ? "bg-white text-[#1E1B18] shadow-sm"
+                    : "text-[#6B6560] hover:text-[#1E1B18]"
+                }`}
+                data-atomic-id="a1yz6wr0"
+                data-atomic-instance={__atomicIdx}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>))}
             </div>
           </motion.div>
 
@@ -342,14 +364,22 @@ export default function HomePage() {
           >
             <ResponsiveContainer width="100%" height={280}>
               <AreaChart data={revenueData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                <defs data-atomic-id="aeho5n0">
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1" data-atomic-id="az3ial2">
+                    <stop
+                      offset="5%"
+                      stopColor="#6366F1"
+                      stopOpacity={0.25}
+                      data-atomic-id="aeguae" />
+                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0} data-atomic-id="a1p2gew" />
                   </linearGradient>
-                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} />
+                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1" data-atomic-id="a15vduxk">
+                    <stop
+                      offset="5%"
+                      stopColor="#22D3EE"
+                      stopOpacity={0.25}
+                      data-atomic-id="aav2btk" />
+                    <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} data-atomic-id="ac5nxy2" />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
@@ -400,7 +430,9 @@ export default function HomePage() {
           </motion.div>
 
           {/* Bottom row: bar + pie */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+            data-atomic-id="a17aj2xb">
             {/* Bar chart */}
             <motion.div
               initial="hidden"
@@ -409,7 +441,9 @@ export default function HomePage() {
               variants={slideInLeft}
               className="bg-white border border-black/8 rounded-2xl p-6"
             >
-              <h3 className="text-sm font-semibold text-[#1E1B18] mb-4">Weekly Sessions</h3>
+              <h3
+                className="text-sm font-semibold text-[#1E1B18] mb-4"
+                data-atomic-id="a1osn5rj">Weekly Sessions</h3>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={weeklyActivity} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
@@ -449,8 +483,10 @@ export default function HomePage() {
               variants={slideInRight}
               className="bg-white border border-black/8 rounded-2xl p-6"
             >
-              <h3 className="text-sm font-semibold text-[#1E1B18] mb-4">Plan Distribution</h3>
-              <div className="flex items-center gap-6">
+              <h3
+                className="text-sm font-semibold text-[#1E1B18] mb-4"
+                data-atomic-id="asx3ldf">Plan Distribution</h3>
+              <div className="flex items-center gap-6" data-atomic-id="auz8nul">
                 <ResponsiveContainer width={160} height={160}>
                   <PieChart>
                     <Pie
@@ -479,29 +515,39 @@ export default function HomePage() {
                     />
                   </PieChart>
                 </ResponsiveContainer>
-                <div className="flex flex-col gap-2.5">
-                  {planData.map((p) => (
-                    <div key={p.name} className="flex items-center gap-2">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                        style={{ background: p.color }}
-                      />
-                      <span className="text-sm text-[#6B6560]">{p.name}</span>
-                      <span className="text-sm font-semibold text-[#1E1B18] ml-auto pl-4">
-                        {p.value}%
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex flex-col gap-2.5" data-atomic-id="a1uaej8i">
+                  {planData.map((p, __atomicIdx) => (<div
+                    key={p.name}
+                    className="flex items-center gap-2"
+                    data-atomic-id="ae9fuhc"
+                    data-atomic-instance={__atomicIdx}>
+                    <span
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ background: p.color }}
+                      data-atomic-id="a11ymw9u"
+                      data-atomic-instance={__atomicIdx} />
+                    <span
+                      className="text-sm text-[#6B6560]"
+                      data-atomic-id="a1398iec"
+                      data-atomic-instance={__atomicIdx}>{p.name}</span>
+                    <span
+                      className="text-sm font-semibold text-[#1E1B18] ml-auto pl-4"
+                      data-atomic-id="a14ju4iu"
+                      data-atomic-instance={__atomicIdx}>
+                      {p.value}%
+                    </span>
+                  </div>))}
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
       </section>
-
       {/* ── Features ─────────────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#F3EFE8]">
-        <div className="max-w-6xl mx-auto">
+      <section
+        className="px-4 sm:px-6 lg:px-8 py-24 bg-[#F3EFE8]"
+        data-atomic-id="ahk4pa">
+        <div className="max-w-6xl mx-auto" data-atomic-id="a47rugv">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -509,14 +555,20 @@ export default function HomePage() {
             variants={fadeInUp}
             className="text-center mb-14"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mb-4">
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mb-4"
+              data-atomic-id="a1hxyrp0">
               <Zap className="w-3.5 h-3.5" />
               Everything you need
             </span>
-            <h2 className="text-4xl font-extrabold text-[#1E1B18] mb-4">
+            <h2
+              className="text-4xl font-extrabold text-[#1E1B18] mb-4"
+              data-atomic-id="a159ud26">
               Built for modern SaaS teams
             </h2>
-            <p className="text-lg text-[#6B6560] max-w-2xl mx-auto">
+            <p
+              className="text-lg text-[#6B6560] max-w-2xl mx-auto"
+              data-atomic-id="a11ubs6u">
               From real-time event streaming to enterprise-grade security, Pulse
               has every layer covered.
             </p>
@@ -529,29 +581,35 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
           >
-            {features.map((f) => (
-              <motion.div
-                key={f.title}
-                variants={fadeInUp}
-                className="bg-white border border-black/8 shadow-sm rounded-2xl p-6 group hover:shadow-md transition-shadow duration-200"
-              >
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: `${f.accent}18` }}
-                >
-                  <f.icon className="w-5 h-5" style={{ color: f.accent }} />
-                </div>
-                <h3 className="text-base font-semibold text-[#1E1B18] mb-2">{f.title}</h3>
-                <p className="text-sm text-[#6B6560] leading-relaxed">{f.description}</p>
-              </motion.div>
-            ))}
+            {features.map((f, __atomicIdx) => (<motion.div
+              key={f.title}
+              variants={fadeInUp}
+              className="bg-white border border-black/8 shadow-sm rounded-2xl p-6 group hover:shadow-md transition-shadow duration-200"
+            >
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: `${f.accent}18` }}
+                data-atomic-id="a1tm76d"
+                data-atomic-instance={__atomicIdx}>
+                <f.icon className="w-5 h-5" style={{ color: f.accent }} />
+              </div>
+              <h3
+                className="text-base font-semibold text-[#1E1B18] mb-2"
+                data-atomic-id="a12stimn"
+                data-atomic-instance={__atomicIdx}>{f.title}</h3>
+              <p
+                className="text-sm text-[#6B6560] leading-relaxed"
+                data-atomic-id="a1cj2jxi"
+                data-atomic-instance={__atomicIdx}>{f.description}</p>
+            </motion.div>))}
           </motion.div>
         </div>
       </section>
-
       {/* ── Testimonials ─────────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#FAF7F2]">
-        <div className="max-w-6xl mx-auto">
+      <section
+        className="px-4 sm:px-6 lg:px-8 py-24 bg-[#FAF7F2]"
+        data-atomic-id="a1mqmv9u">
+        <div className="max-w-6xl mx-auto" data-atomic-id="ahriz5v">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -559,10 +617,12 @@ export default function HomePage() {
             variants={fadeInUp}
             className="text-center mb-14"
           >
-            <h2 className="text-4xl font-extrabold text-[#1E1B18] mb-4">
+            <h2
+              className="text-4xl font-extrabold text-[#1E1B18] mb-4"
+              data-atomic-id="an0e9k0">
               Loved by growth teams
             </h2>
-            <p className="text-lg text-[#6B6560]">
+            <p className="text-lg text-[#6B6560]" data-atomic-id="a17qvat4">
               Don&apos;t take our word for it.
             </p>
           </motion.div>
@@ -574,36 +634,53 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            {testimonials.map((t) => (
-              <motion.div
-                key={t.name}
-                variants={fadeInUp}
-                className="bg-white border border-black/8 shadow-sm rounded-2xl p-6 flex flex-col gap-4"
-              >
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
+            {testimonials.map((t, __atomicIdx) => (<motion.div
+              key={t.name}
+              variants={fadeInUp}
+              className="bg-white border border-black/8 shadow-sm rounded-2xl p-6 flex flex-col gap-4"
+            >
+              <div
+                className="flex items-center gap-1"
+                data-atomic-id="a1mvy509"
+                data-atomic-instance={__atomicIdx}>
+                {Array.from({ length: t.stars }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <p
+                className="text-sm text-[#6B6560] leading-relaxed flex-1"
+                data-atomic-id="ae0g44o"
+                data-atomic-instance={__atomicIdx}>&ldquo;{t.quote}&rdquo;</p>
+              <div
+                className="flex items-center gap-3 pt-2 border-t border-black/8"
+                data-atomic-id="a1myrt99"
+                data-atomic-instance={__atomicIdx}>
+                <div
+                  className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold"
+                  data-atomic-id="a1aufzeo"
+                  data-atomic-instance={__atomicIdx}>
+                  {t.name.split(" ").map((n) => n[0]).join("")}
                 </div>
-                <p className="text-sm text-[#6B6560] leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-2 border-t border-black/8">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
-                    {t.name.split(" ").map((n) => n[0]).join("")}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#1E1B18]">{t.name}</p>
-                    <p className="text-xs text-[#6B6560]">{t.role}</p>
-                  </div>
+                <div data-atomic-id="a1avutj6" data-atomic-instance={__atomicIdx}>
+                  <p
+                    className="text-sm font-semibold text-[#1E1B18]"
+                    data-atomic-id="a1r40ck2"
+                    data-atomic-instance={__atomicIdx}>{t.name}</p>
+                  <p
+                    className="text-xs text-[#6B6560]"
+                    data-atomic-id="a1r40e8k"
+                    data-atomic-instance={__atomicIdx}>{t.role}</p>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            </motion.div>))}
           </motion.div>
         </div>
       </section>
-
       {/* ── Pricing ──────────────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#F3EFE8]">
-        <div className="max-w-5xl mx-auto">
+      <section
+        className="px-4 sm:px-6 lg:px-8 py-24 bg-[#F3EFE8]"
+        data-atomic-id="a7zy0a5">
+        <div className="max-w-5xl mx-auto" data-atomic-id="a126r1vi">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -611,14 +688,18 @@ export default function HomePage() {
             variants={fadeInUp}
             className="text-center mb-14"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mb-4">
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mb-4"
+              data-atomic-id="ahi4owj">
               <Sparkles className="w-3.5 h-3.5" />
               Simple pricing
             </span>
-            <h2 className="text-4xl font-extrabold text-[#1E1B18] mb-4">
+            <h2
+              className="text-4xl font-extrabold text-[#1E1B18] mb-4"
+              data-atomic-id="a1nkgo59">
               Start free, scale as you grow
             </h2>
-            <p className="text-lg text-[#6B6560]">
+            <p className="text-lg text-[#6B6560]" data-atomic-id="ackfcj9">
               No hidden fees. Cancel anytime.
             </p>
           </motion.div>
@@ -630,87 +711,97 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start"
           >
-            {pricingPlans.map((plan) => (
-              <motion.div
-                key={plan.name}
-                variants={scaleIn}
-                className={`rounded-2xl p-7 flex flex-col gap-5 ${
-                  plan.highlighted
-                    ? "bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-[0_8px_40px_rgba(99,102,241,0.4)] scale-[1.03]"
-                    : "bg-white border border-black/8 shadow-sm"
-                }`}
-              >
-                <div>
-                  <p
-                    className={`text-xs font-semibold uppercase tracking-widest mb-1 ${
+            {pricingPlans.map((plan, __atomicIdx) => (<motion.div
+              key={plan.name}
+              variants={scaleIn}
+              className={`rounded-2xl p-7 flex flex-col gap-5 ${
+                plan.highlighted
+                  ? "bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-[0_8px_40px_rgba(99,102,241,0.4)] scale-[1.03]"
+                  : "bg-white border border-black/8 shadow-sm"
+              }`}
+            >
+              <div data-atomic-id="a4qe0k" data-atomic-instance={__atomicIdx}>
+                <p
+                  className={`text-xs font-semibold uppercase tracking-widest mb-1 ${
+                    plan.highlighted ? "text-indigo-200" : "text-[#6B6560]"
+                  }`}
+                  data-atomic-id="a4xpx6s"
+                  data-atomic-instance={__atomicIdx}>
+                  {plan.name}
+                </p>
+                <div
+                  className="flex items-end gap-1"
+                  data-atomic-id="a1cr3gop"
+                  data-atomic-instance={__atomicIdx}>
+                  <span
+                    className={`text-4xl font-extrabold ${
+                      plan.highlighted ? "text-white" : "text-[#1E1B18]"
+                    }`}
+                    data-atomic-id="a1fmfpmz"
+                    data-atomic-instance={__atomicIdx}>
+                    ${plan.price}
+                  </span>
+                  <span
+                    className={`text-sm mb-1.5 ${
                       plan.highlighted ? "text-indigo-200" : "text-[#6B6560]"
                     }`}
-                  >
-                    {plan.name}
-                  </p>
-                  <div className="flex items-end gap-1">
-                    <span
-                      className={`text-4xl font-extrabold ${
-                        plan.highlighted ? "text-white" : "text-[#1E1B18]"
-                      }`}
-                    >
-                      ${plan.price}
-                    </span>
-                    <span
-                      className={`text-sm mb-1.5 ${
-                        plan.highlighted ? "text-indigo-200" : "text-[#6B6560]"
-                      }`}
-                    >
-                      /mo
-                    </span>
-                  </div>
-                  <p
-                    className={`text-sm mt-1 ${
+                    data-atomic-id="a1gx1brh"
+                    data-atomic-instance={__atomicIdx}>
+                    /mo
+                  </span>
+                </div>
+                <p
+                  className={`text-sm mt-1 ${
+                    plan.highlighted ? "text-indigo-100" : "text-[#6B6560]"
+                  }`}
+                  data-atomic-id="a4xq0js"
+                  data-atomic-instance={__atomicIdx}>
+                  {plan.description}
+                </p>
+              </div>
+              <ul
+                className="flex flex-col gap-2.5"
+                data-atomic-id="a10lhj5g"
+                data-atomic-instance={__atomicIdx}>
+                {plan.features.map((feat, __atomicIdx) => (<li
+                  key={feat}
+                  className="flex items-start gap-2.5"
+                  data-atomic-id="a1tu2sxi"
+                  data-atomic-instance={__atomicIdx}>
+                  <Check
+                    className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                      plan.highlighted ? "text-indigo-200" : "text-indigo-500"
+                    }`}
+                  />
+                  <span
+                    className={`text-sm ${
                       plan.highlighted ? "text-indigo-100" : "text-[#6B6560]"
                     }`}
-                  >
-                    {plan.description}
-                  </p>
-                </div>
-
-                <ul className="flex flex-col gap-2.5">
-                  {plan.features.map((feat) => (
-                    <li key={feat} className="flex items-start gap-2.5">
-                      <Check
-                        className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
-                          plan.highlighted ? "text-indigo-200" : "text-indigo-500"
-                        }`}
-                      />
-                      <span
-                        className={`text-sm ${
-                          plan.highlighted ? "text-indigo-100" : "text-[#6B6560]"
-                        }`}
-                      >
-                        {feat}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Link
-                  href="/dashboard"
-                  className={`mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
-                    plan.highlighted
-                      ? "bg-white text-indigo-600 hover:bg-indigo-50"
-                      : "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-[0_4px_16px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_24px_rgba(99,102,241,0.5)] hover:scale-[1.02]"
-                  }`}
-                >
-                  {plan.cta}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </motion.div>
-            ))}
+                    data-atomic-id="a1vbhtmg"
+                    data-atomic-instance={__atomicIdx}>
+                    {feat}
+                  </span>
+                </li>))}
+              </ul>
+              <Link
+                href="/dashboard"
+                className={`mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                  plan.highlighted
+                    ? "bg-white text-indigo-600 hover:bg-indigo-50"
+                    : "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-[0_4px_16px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_24px_rgba(99,102,241,0.5)] hover:scale-[1.02]"
+                }`}
+              >
+                {plan.cta}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </motion.div>))}
           </motion.div>
         </div>
       </section>
-
       {/* ── CTA Banner ───────────────────────────────────────────────────── */}
-      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#FAF7F2]">
+      <section
+        className="px-4 sm:px-6 lg:px-8 py-24 bg-[#FAF7F2]"
+        data-atomic-id="a1u90qup">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -718,14 +809,18 @@ export default function HomePage() {
           variants={scaleIn}
           className="max-w-3xl mx-auto text-center"
         >
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-[#1E1B18] mb-5">
+          <h2
+            className="text-4xl sm:text-5xl font-extrabold text-[#1E1B18] mb-5"
+            data-atomic-id="a1qws1x8">
             Ready to see the full picture?
           </h2>
-          <p className="text-lg text-[#6B6560] mb-8">
+          <p className="text-lg text-[#6B6560] mb-8" data-atomic-id="a1wmpqs">
             Join thousands of SaaS teams who use Pulse to make faster, smarter
             decisions every day.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            data-atomic-id="ag89sjt">
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-semibold text-base shadow-[0_4px_24px_rgba(99,102,241,0.4)] hover:shadow-[0_6px_32px_rgba(99,102,241,0.55)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
@@ -743,7 +838,6 @@ export default function HomePage() {
           </div>
         </motion.div>
       </section>
-
     </div>
   );
 }
