@@ -133,85 +133,29 @@ const metricCards: MetricCard[] = [
 interface PageRow {
   id: string;
   path: string;
-  title: string;
   views: number;
-  uniqueVisitors: number;
-  avgTime: string;
-  bounceRate: number;
-  trend: number;
+  unique: number;
+  bounce: string;
+  duration: string;
+  change: number;
 }
 
 const topPages: PageRow[] = [
-  {
-    id: "1",
-    path: "/dashboard",
-    title: "Main Dashboard",
-    views: 48320,
-    uniqueVisitors: 31200,
-    avgTime: "4m 12s",
-    bounceRate: 28,
-    trend: 12.4,
-  },
-  {
-    id: "2",
-    path: "/pricing",
-    title: "Pricing Plans",
-    views: 36710,
-    uniqueVisitors: 28900,
-    avgTime: "3m 47s",
-    bounceRate: 34,
-    trend: 8.1,
-  },
-  {
-    id: "3",
-    path: "/features",
-    title: "Features Overview",
-    views: 29840,
-    uniqueVisitors: 22100,
-    avgTime: "5m 02s",
-    bounceRate: 22,
-    trend: 15.7,
-  },
-  {
-    id: "4",
-    path: "/blog/analytics-guide",
-    title: "Analytics Guide",
-    views: 24560,
-    uniqueVisitors: 19800,
-    avgTime: "6m 38s",
-    bounceRate: 18,
-    trend: 31.2,
-  },
-  {
-    id: "5",
-    path: "/integrations",
-    title: "Integrations Hub",
-    views: 18920,
-    uniqueVisitors: 14300,
-    avgTime: "3m 21s",
-    bounceRate: 41,
-    trend: -3.4,
-  },
-  {
-    id: "6",
-    path: "/docs/getting-started",
-    title: "Getting Started",
-    views: 16740,
-    uniqueVisitors: 13100,
-    avgTime: "7m 15s",
-    bounceRate: 15,
-    trend: 5.8,
-  },
-  {
-    id: "7",
-    path: "/changelog",
-    title: "Product Changelog",
-    views: 12380,
-    uniqueVisitors: 9600,
-    avgTime: "2m 54s",
-    bounceRate: 47,
-    trend: -1.2,
-  },
+  { id: "p1", path: "/dashboard", views: 48320, unique: 31200, bounce: "28%", duration: "4m 12s", change: 12.4 },
+  { id: "p2", path: "/analytics", views: 31540, unique: 22800, bounce: "31%", duration: "3m 48s", change: 8.7 },
+  { id: "p3", path: "/settings", views: 22180, unique: 18400, bounce: "42%", duration: "2m 55s", change: -3.2 },
+  { id: "p4", path: "/users", views: 18960, unique: 14200, bounce: "35%", duration: "3m 22s", change: 21.5 },
+  { id: "p5", path: "/billing", views: 14230, unique: 11800, bounce: "38%", duration: "2m 41s", change: 5.1 },
+  { id: "p6", path: "/reports", views: 9870, unique: 8100, bounce: "44%", duration: "2m 18s", change: 18.3 },
+  { id: "p7", path: "/integrations", views: 7640, unique: 6300, bounce: "51%", duration: "1m 58s", change: -1.8 },
+];
+
+const trafficSources = [
+  { source: "Organic Search", sessions: 28400, share: 38, color: "#6366F1" },
+  { source: "Direct", sessions: 18200, share: 24, color: "#22D3EE" },
+  { source: "Paid Search", sessions: 13500, share: 18, color: "#F59E0B" },
+  { source: "Referral", sessions: 9800, share: 13, color: "#10B981" },
+  { source: "Social", sessions: 5300, share: 7, color: "#EC4899" },
 ];
 
 const PERIODS: { label: string; value: ChartPeriod }[] = [
@@ -221,495 +165,360 @@ const PERIODS: { label: string; value: ChartPeriod }[] = [
   { label: "1Y", value: "1y" },
 ];
 
-const CHANNEL_COLORS: Record<string, string> = {
-  Organic: "#6366F1",
-  Paid: "#22D3EE",
-  Referral: "#F59E0B",
-  Social: "#10B981",
+// ─── Tooltip style ────────────────────────────────────────────────────────────
+
+const tooltipStyle = {
+  contentStyle: {
+    background: "#FFFFFF",
+    border: "1px solid rgba(0,0,0,0.08)",
+    borderRadius: "12px",
+    color: "#1E1B18",
+    fontSize: "12px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+  },
+  labelStyle: { color: "#1E1B18", fontWeight: 600 },
+  itemStyle: { color: "#1E1B18" },
 };
 
-// ─── Custom Tooltip ───────────────────────────────────────────────────────────
-
-function CustomTooltip({
-  active,
-  payload,
-  label,
-  prefix = "",
-}: {
-  active?: boolean;
-  payload?: { name: string; value: number; color: string }[];
-  label?: string;
-  prefix?: string;
-}) {
-  if (!active || !payload || payload.length === 0) return null;
-  return (
-    <div className="bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)] text-sm">
-      <p className="text-slate-400 text-xs mb-2 font-medium">{label}</p>
-      {payload.map((entry) => (
-        <div key={entry.name} className="flex items-center gap-2 mb-1">
-          <span
-            className="w-2 h-2 rounded-full flex-shrink-0"
-            style={{ background: entry.color }}
-          />
-          <span className="text-slate-300">{entry.name}:</span>
-          <span className="text-white font-semibold">
-            {prefix}
-            {(entry.value ?? 0).toLocaleString("en-US")}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ─── Sparkline ────────────────────────────────────────────────────────────────
-
-function Sparkline({ data, color }: { data: { v: number }[]; color: string }) {
-  return (
-    <ResponsiveContainer width="100%" height={48}>
-      <LineChart data={data ?? []} margin={{ top: 4, right: 4, bottom: 4, left: 4 }}>
-        <Line
-          type="monotone"
-          dataKey="v"
-          stroke={color}
-          strokeWidth={2}
-          dot={false}
-          isAnimationActive={true}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  );
-}
-
-// ─── Page Component ───────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AnalyticsPage() {
   const t = useTranslations();
-  const [acqPeriod, setAcqPeriod] = useState<ChartPeriod>("1y");
-  const [revPeriod, setRevPeriod] = useState<ChartPeriod>("1y");
+  const [period, setPeriod] = useState<ChartPeriod>("30d");
   const [sortKey, setSortKey] = useState<keyof PageRow>("views");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-  const handleSort = (key: keyof PageRow) => {
+  const sortedPages = [...topPages].sort((a, b) => {
+    const av = a[sortKey];
+    const bv = b[sortKey];
+    if (typeof av === "number" && typeof bv === "number") {
+      return sortDir === "asc" ? av - bv : bv - av;
+    }
+    return sortDir === "asc"
+      ? String(av).localeCompare(String(bv))
+      : String(bv).localeCompare(String(av));
+  });
+
+  function toggleSort(key: keyof PageRow) {
     if (sortKey === key) {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(key);
       setSortDir("desc");
     }
-  };
+  }
 
-  const sortedPages = [...(topPages ?? [])].sort((a, b) => {
-    const av = a[sortKey] ?? 0;
-    const bv = b[sortKey] ?? 0;
-    if (typeof av === "number" && typeof bv === "number") {
-      return sortDir === "desc" ? bv - av : av - bv;
-    }
-    return sortDir === "desc"
-      ? String(bv).localeCompare(String(av))
-      : String(av).localeCompare(String(bv));
-  });
+  function SortIcon({ col }: { col: keyof PageRow }) {
+    if (sortKey !== col) return <ChevronUp className="w-3 h-3 opacity-30" />;
+    return sortDir === "asc" ? (
+      <ChevronUp className="w-3 h-3 text-indigo-400" />
+    ) : (
+      <ChevronDown className="w-3 h-3 text-indigo-400" />
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-[#0F172A] text-[#F8FAFC] pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <div className="min-h-screen bg-[#FAF7F2] pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* ── Header ── */}
+        {/* Header */}
         <motion.div
-          variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
+          variants={staggerContainer}
+          className="mb-8"
         >
-          <motion.div variants={fadeInUp}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold tracking-wide">
-                <BarChartIcon className="w-3 h-3" />
-                {t("analytics.badge")}
-              </span>
+          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1E1B18] tracking-tight">
+                Analytics
+              </h1>
+              <p className="mt-1 text-sm text-[#6B6560]">
+                Deep-dive into traffic, engagement, and revenue trends.
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-              {t("analytics.title")}
-            </h1>
-            <p className="mt-1.5 text-slate-400 text-base leading-relaxed">
-              {t("analytics.subtitle")}
-            </p>
-          </motion.div>
 
-          <motion.div variants={fadeIn} className="flex items-center gap-2 text-xs text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            {t("analytics.liveLabel")}
+            {/* Period Selector */}
+            <div className="flex items-center gap-1.5 bg-[#F3EFE8] rounded-xl p-1">
+              {PERIODS.map((p) => (
+                <button
+                  key={p.value}
+                  onClick={() => setPeriod(p.value)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    period === p.value
+                      ? "bg-indigo-500 text-white shadow-sm"
+                      : "bg-black/5 text-[#6B6560] hover:bg-black/8 hover:text-[#1E1B18]"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </motion.div>
         </motion.div>
 
-        {/* ── Metric Cards with Sparklines ── */}
+        {/* Metric Cards */}
         <motion.div
-          variants={staggerContainer}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
           {metricCards.map((card) => {
-            const isPositive = card.change >= 0;
-            const isBounce = card.id === "bounce";
-            const good = isBounce ? !isPositive : isPositive;
+            const isPositive = card.change > 0;
+            const isGood = card.id === "bounce" ? !isPositive : isPositive;
             return (
               <motion.div
                 key={card.id}
                 variants={scaleIn}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className="bg-[#1E293B]/80 border border-white/[0.07] rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)] flex flex-col gap-3"
+                className="bg-white border border-black/8 shadow-sm rounded-2xl p-5 flex flex-col gap-3"
               >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 font-medium mb-1">{card.label}</p>
-                    <p className="text-2xl font-bold text-white tracking-tight">{card.value}</p>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-[#6B6560] uppercase tracking-wider">
+                    {card.label}
+                  </span>
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: `${card.color}18` }}
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: card.color + "22" }}
                   >
                     <card.icon className="w-4 h-4" style={{ color: card.color }} />
                   </div>
                 </div>
-                <Sparkline data={sparklineData[card.sparkKey] ?? []} color={card.color} />
-                <div className="flex items-center gap-1.5">
+
+                <div className="flex items-end justify-between gap-2">
+                  <span className="text-2xl font-bold text-[#1E1B18] tracking-tight">
+                    {card.value}
+                  </span>
                   <span
-                    className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full ${
-                      good
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : "bg-red-500/10 text-red-400"
+                    className={`flex items-center gap-0.5 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                      isGood
+                        ? "text-emerald-600 bg-emerald-50"
+                        : "text-red-500 bg-red-50"
                     }`}
                   >
-                    {good ? (
+                    {isPositive ? (
                       <ArrowUpRight className="w-3 h-3" />
                     ) : (
                       <ArrowDownRight className="w-3 h-3" />
                     )}
-                    {Math.abs(card.change).toFixed(1)}%
+                    {Math.abs(card.change)}%
                   </span>
-                  <span className="text-xs text-slate-500">{t("analytics.vsLastMonth")}</span>
+                </div>
+
+                {/* Sparkline */}
+                <div className="h-10">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={sparklineData[card.sparkKey]} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id={`spark-${card.id}`} x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor={card.color} stopOpacity={0.3} />
+                          <stop offset="95%" stopColor={card.color} stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <Area
+                        type="monotone"
+                        dataKey="v"
+                        stroke={card.color}
+                        strokeWidth={1.5}
+                        fill={`url(#spark-${card.id})`}
+                        dot={false}
+                        isAnimationActive={false}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
               </motion.div>
             );
           })}
         </motion.div>
 
-        {/* ── Acquisition Bar Chart ── */}
+        {/* Charts Row 1 */}
         <motion.div
-          variants={fadeInUp}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="bg-[#1E293B]/80 border border-white/[0.07] rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h2 className="text-lg font-semibold text-white tracking-tight">
-                {t("analytics.acqTitle")}
-              </h2>
-              <p className="text-sm text-slate-400 mt-0.5">{t("analytics.acqSubtitle")}</p>
-            </div>
-            <div className="flex items-center gap-1 bg-[#0F172A]/60 border border-white/[0.07] rounded-xl p-1">
-              {PERIODS.map((p) => (
-                <button
-                  key={p.value}
-                  onClick={() => setAcqPeriod(p.value)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
-                    acqPeriod === p.value
-                      ? "bg-indigo-500 text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-4 mb-4">
-            {Object.entries(CHANNEL_COLORS).map(([name, color]) => (
-              <div key={name} className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm" style={{ background: color }} />
-                <span className="text-xs text-slate-400">{name}</span>
+          {/* User Acquisition by Channel */}
+          <motion.div variants={fadeInUp} className="bg-white border border-black/8 shadow-sm rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-base font-semibold text-[#1E1B18]">User Acquisition</h2>
+                <p className="text-xs text-[#6B6560] mt-0.5">By channel over time</p>
               </div>
-            ))}
-          </div>
+              <BarChartIcon className="w-4 h-4 text-[#6B6560]" />
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={acquisitionData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                <XAxis dataKey="month" tick={{ fill: "#9C9590", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#9C9590", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <Tooltip {...tooltipStyle} />
+                <Legend
+                  wrapperStyle={{ fontSize: "11px", color: "#9C9590", paddingTop: "12px" }}
+                />
+                <Bar dataKey="Organic" stackId="a" fill="#6366F1" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="Paid" stackId="a" fill="#22D3EE" />
+                <Bar dataKey="Referral" stackId="a" fill="#F59E0B" />
+                <Bar dataKey="Social" stackId="a" fill="#10B981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
 
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={acquisitionData}
-              margin={{ top: 4, right: 4, left: -16, bottom: 0 }}
-              barCategoryGap="28%"
-              barGap={3}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: "#64748B", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "#64748B", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-              {Object.entries(CHANNEL_COLORS).map(([name, color]) => (
-                <Bar key={name} dataKey={name} fill={color} radius={[4, 4, 0, 0]} maxBarSize={18} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+          {/* Revenue vs Expenses */}
+          <motion.div variants={fadeInUp} className="bg-white border border-black/8 shadow-sm rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-base font-semibold text-[#1E1B18]">Revenue vs Expenses</h2>
+                <p className="text-xs text-[#6B6560] mt-0.5">Monthly comparison</p>
+              </div>
+              <TrendingUp className="w-4 h-4 text-[#6B6560]" />
+            </div>
+            <ResponsiveContainer width="100%" height={260}>
+              <LineChart data={revenueExpenseData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                <XAxis dataKey="month" tick={{ fill: "#9C9590", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#9C9590", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+                <Tooltip {...tooltipStyle} formatter={(v: number) => [`$${v.toLocaleString("en-US")}`, ""]} />
+                <Legend wrapperStyle={{ fontSize: "11px", color: "#9C9590", paddingTop: "12px" }} />
+                <Line type="monotone" dataKey="Revenue" stroke="#6366F1" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Expenses" stroke="#F59E0B" strokeWidth={2} dot={false} strokeDasharray="4 4" />
+              </LineChart>
+            </ResponsiveContainer>
+          </motion.div>
         </motion.div>
 
-        {/* ── Revenue vs Expenses Area Chart ── */}
+        {/* Traffic Sources + Top Pages */}
         <motion.div
-          variants={fadeInUp}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="bg-[#1E293B]/80 border border-white/[0.07] rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h2 className="text-lg font-semibold text-white tracking-tight">
-                {t("analytics.revTitle")}
-              </h2>
-              <p className="text-sm text-slate-400 mt-0.5">{t("analytics.revSubtitle")}</p>
+          {/* Traffic Sources */}
+          <motion.div variants={fadeInUp} className="bg-white border border-black/8 shadow-sm rounded-2xl p-6">
+            <div className="mb-5">
+              <h2 className="text-base font-semibold text-[#1E1B18]">Traffic Sources</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Session share by origin</p>
             </div>
-            <div className="flex items-center gap-1 bg-[#0F172A]/60 border border-white/[0.07] rounded-xl p-1">
-              {PERIODS.map((p) => (
-                <button
-                  key={p.value}
-                  onClick={() => setRevPeriod(p.value)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 ${
-                    revPeriod === p.value
-                      ? "bg-indigo-500 text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]"
-                      : "text-slate-400 hover:text-white"
-                  }`}
-                >
-                  {p.label}
-                </button>
+            <div className="space-y-3">
+              {trafficSources.map((src) => (
+                <div key={src.source}>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-3.5 h-3.5" style={{ color: src.color }} />
+                      <span className="text-xs font-medium text-[#1E1B18]">{src.source}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#6B6560]">{src.sessions.toLocaleString("en-US")}</span>
+                      <span className="text-xs font-semibold text-[#1E1B18]">{src.share}%</span>
+                    </div>
+                  </div>
+                  <div className="h-1.5 bg-[#F3EFE8] rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${src.share}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                      className="h-full rounded-full"
+                      style={{ background: src.color }}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-wrap gap-6 mb-4">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-0.5 rounded-full bg-indigo-500" />
-              <span className="text-xs text-slate-400">{t("analytics.revenue")}</span>
+          {/* Top Pages Table */}
+          <motion.div variants={fadeInUp} className="lg:col-span-2 bg-white border border-black/8 shadow-sm rounded-2xl p-6">
+            <div className="mb-5">
+              <h2 className="text-base font-semibold text-[#1E1B18]">Top Pages</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Sorted by {sortKey}</p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-0.5 rounded-full bg-amber-400" />
-              <span className="text-xs text-slate-400">{t("analytics.expenses")}</span>
-            </div>
-          </div>
-
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart
-              data={revenueExpenseData}
-              margin={{ top: 4, right: 4, left: -8, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366F1" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="gradExpenses" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-              <XAxis
-                dataKey="month"
-                tick={{ fill: "#64748B", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "#64748B", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
-              />
-              <Tooltip content={<CustomTooltip prefix="$" />} cursor={{ stroke: "rgba(255,255,255,0.08)", strokeWidth: 1 }} />
-              <Area
-                type="monotone"
-                dataKey="Revenue"
-                stroke="#6366F1"
-                strokeWidth={2.5}
-                fill="url(#gradRevenue)"
-                dot={false}
-              />
-              <Area
-                type="monotone"
-                dataKey="Expenses"
-                stroke="#F59E0B"
-                strokeWidth={2}
-                fill="url(#gradExpenses)"
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-
-          {/* Summary row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-5 border-t border-white/[0.06]">
-            {[
-              { label: t("analytics.totalRevenue"), value: "$902K", good: true },
-              { label: t("analytics.totalExpenses"), value: "$470K", good: false },
-              { label: t("analytics.netProfit"), value: "$432K", good: true },
-              { label: t("analytics.margin"), value: "47.9%", good: true },
-            ].map((item) => (
-              <div key={item.label} className="text-center">
-                <p className="text-xs text-slate-500 mb-1">{item.label}</p>
-                <p className={`text-lg font-bold ${item.good ? "text-white" : "text-amber-400"}`}>
-                  {item.value}
-                </p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Top Pages Table ── */}
-        <motion.div
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="bg-[#1E293B]/80 border border-white/[0.07] rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
-        >
-          <div className="px-6 py-5 border-b border-white/[0.06] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold text-white tracking-tight">
-                {t("analytics.pagesTitle")}
-              </h2>
-              <p className="text-sm text-slate-400 mt-0.5">{t("analytics.pagesSubtitle")}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-slate-500" />
-              <span className="text-xs text-slate-500">{t("analytics.allRegions")}</span>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/[0.05]">
-                  {(
-                    [
-                      { key: "title", label: t("analytics.colPage") },
-                      { key: "views", label: t("analytics.colViews") },
-                      { key: "uniqueVisitors", label: t("analytics.colUnique") },
-                      { key: "avgTime", label: t("analytics.colAvgTime") },
-                      { key: "bounceRate", label: t("analytics.colBounce") },
-                      { key: "trend", label: t("analytics.colTrend") },
-                    ] as { key: keyof PageRow; label: string }[]
-                  ).map((col) => (
-                    <th
-                      key={col.key}
-                      onClick={() => handleSort(col.key)}
-                      className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors duration-150 select-none whitespace-nowrap"
-                    >
-                      <span className="flex items-center gap-1">
-                        {col.label}
-                        {sortKey === col.key ? (
-                          sortDir === "desc" ? (
-                            <ChevronDown className="w-3 h-3 text-indigo-400" />
-                          ) : (
-                            <ChevronUp className="w-3 h-3 text-indigo-400" />
-                          )
-                        ) : (
-                          <span className="w-3 h-3" />
-                        )}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {sortedPages.map((row, i) => (
-                  <motion.tr
-                    key={row.id}
-                    initial={{ opacity: 0, x: -12 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.35, delay: i * 0.05, ease: "easeOut" }}
-                    className="border-b border-white/[0.04] hover:bg-white/[0.025] transition-colors duration-150 group"
-                  >
-                    <td className="px-5 py-4">
-                      <div>
-                        <p className="text-white font-medium group-hover:text-indigo-300 transition-colors duration-150">
-                          {row.title}
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5 font-mono">{row.path}</p>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4 text-slate-300 font-medium tabular-nums">
-                      {(row.views ?? 0).toLocaleString("en-US")}
-                    </td>
-                    <td className="px-5 py-4 text-slate-400 tabular-nums">
-                      {(row.uniqueVisitors ?? 0).toLocaleString("en-US")}
-                    </td>
-                    <td className="px-5 py-4 text-slate-400">{row.avgTime}</td>
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${row.bounceRate ?? 0}%`,
-                              background:
-                                (row.bounceRate ?? 0) < 25
-                                  ? "#10B981"
-                                  : (row.bounceRate ?? 0) < 40
-                                  ? "#F59E0B"
-                                  : "#EF4444",
-                            }}
-                          />
-                        </div>
-                        <span className="text-slate-400 text-xs tabular-nums">
-                          {row.bounceRate ?? 0}%
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full ${
-                          (row.trend ?? 0) >= 0
-                            ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-red-500/10 text-red-400"
-                        }`}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-black/5">
+                    {([
+                      { key: "path", label: "Page" },
+                      { key: "views", label: "Views" },
+                      { key: "unique", label: "Unique" },
+                      { key: "bounce", label: "Bounce" },
+                      { key: "duration", label: "Duration" },
+                      { key: "change", label: "Δ" },
+                    ] as { key: keyof PageRow; label: string }[]).map((col) => (
+                      <th
+                        key={col.key}
+                        onClick={() => toggleSort(col.key)}
+                        className="text-left pb-3 pr-4 text-xs font-medium text-[#6B6560] uppercase tracking-wider cursor-pointer hover:text-[#1E1B18] transition-colors select-none"
                       >
-                        {(row.trend ?? 0) >= 0 ? (
-                          <TrendingUp className="w-3 h-3" />
-                        ) : (
-                          <TrendingDown className="w-3 h-3" />
-                        )}
-                        {(row.trend ?? 0) >= 0 ? "+" : ""}
-                        {(row.trend ?? 0).toFixed(1)}%
-                      </span>
-                    </td>
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="px-6 py-4 border-t border-white/[0.05] flex items-center justify-between">
-            <p className="text-xs text-slate-500">
-              {t("analytics.showingRows", { count: sortedPages.length })}
-            </p>
-            <button className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors duration-150">
-              {t("analytics.viewAll")}
-            </button>
-          </div>
+                        <span className="flex items-center gap-1">
+                          {col.label}
+                          <SortIcon col={col.key} />
+                        </span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedPages.map((row, i) => (
+                    <tr
+                      key={row.id}
+                      className={`border-b border-black/5 hover:bg-[#F3EFE8] transition-colors ${
+                        i === sortedPages.length - 1 ? "border-b-0" : ""
+                      }`}
+                    >
+                      <td className="py-3 pr-4">
+                        <span className="font-mono text-xs text-[#1E1B18]">{row.path}</span>
+                      </td>
+                      <td className="py-3 pr-4 text-[#1E1B18] font-medium">
+                        {row.views.toLocaleString("en-US")}
+                      </td>
+                      <td className="py-3 pr-4 text-[#6B6560]">
+                        {row.unique.toLocaleString("en-US")}
+                      </td>
+                      <td className="py-3 pr-4 text-[#6B6560]">{row.bounce}</td>
+                      <td className="py-3 pr-4 text-[#6B6560]">{row.duration}</td>
+                      <td className="py-3">
+                        <span
+                          className={`flex items-center gap-0.5 text-xs font-semibold ${
+                            row.change >= 0 ? "text-emerald-600" : "text-red-500"
+                          }`}
+                        >
+                          {row.change >= 0 ? (
+                            <ArrowUpRight className="w-3 h-3" />
+                          ) : (
+                            <ArrowDownRight className="w-3 h-3" />
+                          )}
+                          {Math.abs(row.change)}%
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
         </motion.div>
 
+        {/* Divider */}
+        <div className="border-t border-black/8 my-6" />
+
+        {/* Footer note */}
+        <motion.p
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+          className="text-center text-xs text-[#6B6560]"
+        >
+          Data refreshes every 5 minutes · All times in UTC
+        </motion.p>
       </div>
-    </main>
+    </div>
   );
 }

@@ -30,7 +30,7 @@ export default function Navbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#0F172A]/80 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_32px_rgba(99,102,241,0.08)]"
+          ? "bg-[#FAF7F2]/90 backdrop-blur-xl border-b border-black/8 shadow-[0_4px_32px_rgba(99,102,241,0.10)]"
           : "bg-transparent"
       }`}
     >
@@ -41,7 +41,7 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-[0_0_16px_rgba(99,102,241,0.5)] group-hover:shadow-[0_0_24px_rgba(99,102,241,0.7)] transition-all duration-300">
               <Activity className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-[#F8FAFC] font-semibold text-lg tracking-tight">
+            <span className="text-[#1E1B18] font-semibold text-lg tracking-tight">
               {APP_NAME}
             </span>
           </Link>
@@ -69,14 +69,14 @@ export default function Navbar() {
                     }}
                     className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "text-white"
-                        : "text-slate-400 hover:text-white"
+                        ? "text-[#1E1B18]"
+                        : "text-[#6B6560] hover:text-[#1E1B18]"
                     }`}
                   >
                     {isActive && (
                       <motion.span
                         layoutId="nav-pill"
-                        className="absolute inset-0 rounded-lg bg-white/10 border border-white/10"
+                        className="absolute inset-0 rounded-lg bg-black/6 border border-black/8"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                       />
                     )}
@@ -91,16 +91,19 @@ export default function Navbar() {
                   href={link.href}
                   className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive
-                      ? "text-white"
-                      : "text-slate-400 hover:text-white"
+                      ? "text-[#1E1B18]"
+                      : "text-[#6B6560] hover:text-[#1E1B18]"
                   }`}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute inset-0 rounded-lg bg-white/10 border border-white/10"
+                      className="absolute inset-0 rounded-lg bg-black/6 border border-black/8"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                     />
+                  )}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full bg-indigo-500" />
                   )}
                   <span className="relative z-10">{link.label}</span>
                 </Link>
@@ -108,38 +111,37 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right side actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200"
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
+            {/* Bell */}
+            <button
+              type="button"
+              className="relative w-9 h-9 rounded-xl flex items-center justify-center text-[#6B6560] hover:text-[#1E1B18] bg-black/5 border border-black/8 hover:bg-black/10 transition-all duration-200"
               aria-label="Notifications"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" />
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-200"
-              aria-label="User profile"
-            >
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-white" />
-              </div>
-              <span className="text-sm text-slate-300 font-medium">Admin</span>
-            </motion.button>
-          </div>
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-500" />
+            </button>
 
-          {/* Mobile toggle */}
-          <button
-            className="md:hidden w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all duration-200"
-            onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
+            {/* Avatar */}
+            <button
+              type="button"
+              className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 text-white flex items-center justify-center font-semibold text-sm shadow-[0_0_12px_rgba(99,102,241,0.4)] hover:shadow-[0_0_20px_rgba(99,102,241,0.6)] transition-all duration-200"
+              aria-label="User menu"
+            >
+              <User className="w-4 h-4" />
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((v) => !v)}
+              className="md:hidden w-9 h-9 rounded-xl flex items-center justify-center text-[#6B6560] hover:text-[#1E1B18] transition-colors duration-200"
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -150,10 +152,10 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="md:hidden overflow-hidden bg-[#0F172A]/95 backdrop-blur-xl border-b border-white/10"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="md:hidden overflow-hidden bg-[#FAF7F2]/98 backdrop-blur-xl border-b border-black/8"
           >
-            <nav className="px-4 py-4 flex flex-col gap-1">
+            <nav className="px-4 py-3 flex flex-col gap-1">
               {navLinks.map((link) => {
                 const isActive =
                   link.href === "/"
@@ -174,10 +176,10 @@ export default function Navbar() {
                         }
                         setMobileOpen(false);
                       }}
-                      className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                         isActive
-                          ? "bg-white/10 text-white border border-white/10"
-                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                          ? "text-[#1E1B18] bg-black/8"
+                          : "text-[#6B6560] hover:text-[#1E1B18] hover:bg-black/5"
                       }`}
                     >
                       {link.label}
@@ -189,25 +191,16 @@ export default function Navbar() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                       isActive
-                        ? "bg-white/10 text-white border border-white/10"
-                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                        ? "text-[#1E1B18] bg-black/8"
+                        : "text-[#6B6560] hover:text-[#1E1B18] hover:bg-black/5"
                     }`}
                   >
                     {link.label}
                   </Link>
                 );
               })}
-              <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-white">Admin User</p>
-                  <p className="text-xs text-slate-400">admin@pulse.io</p>
-                </div>
-              </div>
             </nav>
           </motion.div>
         )}

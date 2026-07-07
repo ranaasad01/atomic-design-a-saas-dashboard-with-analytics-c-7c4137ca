@@ -26,7 +26,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="bg-[#0F172A] text-[#F8FAFC] font-sans antialiased min-h-screen flex flex-col">
+      <body className="bg-[#FAF7F2] text-[#1E1B18] font-sans antialiased min-h-screen flex flex-col">
         <LocaleProvider>
           <LanguageToggle />
           <Navbar />

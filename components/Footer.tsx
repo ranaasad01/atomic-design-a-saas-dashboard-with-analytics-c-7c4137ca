@@ -29,7 +29,7 @@ export default function Footer() {
       whileInView="visible"
       viewport={{ once: true, margin: "-40px" }}
       variants={staggerContainer}
-      className="border-t border-white/10 bg-[#0F172A]/80 backdrop-blur-xl mt-auto"
+      className="border-t border-black/8 bg-[#F3EFE8]/80 backdrop-blur-xl mt-auto"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -39,11 +39,11 @@ export default function Footer() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-[0_0_16px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_24px_rgba(99,102,241,0.6)] transition-all duration-300">
                 <Activity className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-[#F8FAFC] font-semibold text-lg tracking-tight">
+              <span className="text-[#1E1B18] font-semibold text-lg tracking-tight">
                 {APP_NAME}
               </span>
             </Link>
-            <p className="mt-3 text-sm text-slate-400 leading-relaxed max-w-xs">
+            <p className="mt-3 text-sm text-[#6B6560] leading-relaxed max-w-xs">
               {APP_TAGLINE}
             </p>
             <div className="flex items-center gap-3 mt-5">
@@ -55,7 +55,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200"
+                  className="w-8 h-8 rounded-lg bg-black/5 border border-black/8 flex items-center justify-center text-[#6B6560] hover:text-[#1E1B18] hover:bg-black/10 transition-all duration-200"
                   aria-label={s.label}
                 >
                   <s.icon className="w-3.5 h-3.5" />
@@ -66,7 +66,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <motion.div variants={fadeInUp}>
-            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4">
+            <h3 className="text-xs font-semibold text-[#1E1B18] uppercase tracking-widest mb-4">
               Navigation
             </h3>
             <ul className="space-y-2.5">
@@ -84,18 +84,19 @@ export default function Footer() {
                               ?.scrollIntoView({ behavior: "smooth" });
                           }
                         }}
-                        className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
+                        className="text-sm text-[#6B6560] hover:text-[#1E1B18] transition-colors duration-200"
                       >
                         {link.label}
                       </Link>
                     </li>
                   );
                 }
+
                 return (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
+                      className="text-sm text-[#6B6560] hover:text-[#1E1B18] transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
@@ -105,40 +106,41 @@ export default function Footer() {
             </ul>
           </motion.div>
 
-          {/* Product info */}
+          {/* Legal / Extra */}
           <motion.div variants={fadeInUp}>
-            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4">
-              Product
+            <h3 className="text-xs font-semibold text-[#1E1B18] uppercase tracking-widest mb-4">
+              Legal
             </h3>
             <ul className="space-y-2.5">
-              {["Changelog", "Documentation", "API Reference", "Status"].map(
-                (item) => (
-                  <li key={item}>
-                    <span className="text-sm text-slate-400 cursor-default">
-                      {item}
-                    </span>
-                  </li>
-                )
-              )}
+              {[
+                { label: "Privacy Policy", href: "#" },
+                { label: "Terms of Service", href: "#" },
+                { label: "Cookie Policy", href: "#" },
+                { label: "Security", href: "#" },
+              ].map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-sm text-[#6B6560] hover:text-[#1E1B18] transition-colors duration-200"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-            <div className="mt-6 px-3 py-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-slate-300 font-medium">
-                All systems operational
-              </span>
-            </div>
           </motion.div>
         </div>
 
+        {/* Bottom bar */}
         <motion.div
           variants={fadeInUp}
-          className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3"
+          className="mt-10 pt-6 border-t border-black/8 flex flex-col sm:flex-row items-center justify-between gap-3"
         >
-          <p className="text-xs text-slate-500">
-            &copy; 2024 {APP_NAME}. All rights reserved.
+          <p className="text-xs text-[#9C9590]">
+            &copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.
           </p>
-          <p className="text-xs text-slate-600">
-            Built for modern SaaS teams.
+          <p className="text-xs text-[#9C9590]">
+            Built with Next.js &amp; Recharts
           </p>
         </motion.div>
       </div>

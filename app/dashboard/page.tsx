@@ -159,321 +159,192 @@ const revenueData1y = [
   { date: "Mar", revenue: 62000 },
   { date: "Apr", revenue: 68000 },
   { date: "May", revenue: 74000 },
-  { date: "Jun", revenue: 80000 },
-  { date: "Jul", revenue: 87000 },
-  { date: "Aug", revenue: 93000 },
-  { date: "Sep", revenue: 99000 },
-  { date: "Oct", revenue: 107000 },
-  { date: "Nov", revenue: 114000 },
-  { date: "Dec", revenue: 120000 },
-  { date: "Jan", revenue: 125000 },
-  { date: "Feb", revenue: 128450 },
+  { date: "Jun", revenue: 81000 },
+  { date: "Jul", revenue: 88000 },
+  { date: "Aug", revenue: 95000 },
+  { date: "Sep", revenue: 103000 },
+  { date: "Oct", revenue: 112000 },
+  { date: "Nov", revenue: 118000 },
+  { date: "Dec", revenue: 124000 },
+  { date: "Jan", revenue: 128450 },
 ];
 
-const planBreakdown = [
-  { name: "Starter", value: 38 },
-  { name: "Pro", value: 31 },
-  { name: "Business", value: 20 },
-  { name: "Enterprise", value: 11 },
+const planData = [
+  { name: "Starter", value: 38, color: PLAN_COLORS["Starter"] },
+  { name: "Pro", value: 31, color: PLAN_COLORS["Pro"] },
+  { name: "Business", value: 20, color: PLAN_COLORS["Business"] },
+  { name: "Enterprise", value: 11, color: PLAN_COLORS["Enterprise"] },
 ];
 
 const transactions = [
   {
-    id: "txn_001",
-    user: "Sophia Carter",
-    email: "sophia@acmecorp.io",
-    plan: "Pro",
-    amount: 79,
-    status: "paid" as const,
-    date: "Feb 19, 2025",
-  },
-  {
-    id: "txn_002",
-    user: "Marcus Lee",
-    email: "marcus@brightwave.co",
-    plan: "Business",
-    amount: 199,
-    status: "paid" as const,
-    date: "Feb 19, 2025",
-  },
-  {
-    id: "txn_003",
-    user: "Priya Nair",
-    email: "priya@stacklabs.dev",
-    plan: "Starter",
-    amount: 29,
-    status: "pending" as const,
-    date: "Feb 18, 2025",
-  },
-  {
-    id: "txn_004",
-    user: "James Okafor",
-    email: "james@novafin.com",
+    id: "TXN-4821",
+    user: "Acme Corp",
+    email: "billing@acme.com",
     plan: "Enterprise",
+    amount: 2400,
+    status: "paid" as const,
+    date: "Feb 14, 2024",
+  },
+  {
+    id: "TXN-4820",
+    user: "Bright Labs",
+    email: "admin@brightlabs.io",
+    plan: "Pro",
+    amount: 149,
+    status: "paid" as const,
+    date: "Feb 14, 2024",
+  },
+  {
+    id: "TXN-4819",
+    user: "Nova Studio",
+    email: "finance@novastudio.co",
+    plan: "Business",
+    amount: 499,
+    status: "pending" as const,
+    date: "Feb 13, 2024",
+  },
+  {
+    id: "TXN-4818",
+    user: "Orbit Systems",
+    email: "ops@orbitsys.com",
+    plan: "Starter",
+    amount: 49,
+    status: "paid" as const,
+    date: "Feb 13, 2024",
+  },
+  {
+    id: "TXN-4817",
+    user: "Zenith AI",
+    email: "accounts@zenith.ai",
+    plan: "Enterprise",
+    amount: 2400,
+    status: "failed" as const,
+    date: "Feb 12, 2024",
+  },
+  {
+    id: "TXN-4816",
+    user: "Pixel Works",
+    email: "hello@pixelworks.design",
+    plan: "Pro",
+    amount: 149,
+    status: "paid" as const,
+    date: "Feb 12, 2024",
+  },
+  {
+    id: "TXN-4815",
+    user: "Cascade Inc",
+    email: "billing@cascade.inc",
+    plan: "Business",
     amount: 499,
     status: "paid" as const,
-    date: "Feb 18, 2025",
-  },
-  {
-    id: "txn_005",
-    user: "Elena Vasquez",
-    email: "elena@loopcraft.io",
-    plan: "Pro",
-    amount: 79,
-    status: "failed" as const,
-    date: "Feb 17, 2025",
-  },
-  {
-    id: "txn_006",
-    user: "Daniel Kim",
-    email: "daniel@pixelshift.co",
-    plan: "Business",
-    amount: 199,
-    status: "paid" as const,
-    date: "Feb 17, 2025",
-  },
-  {
-    id: "txn_007",
-    user: "Aisha Mensah",
-    email: "aisha@cloudnine.ai",
-    plan: "Starter",
-    amount: 29,
-    status: "paid" as const,
-    date: "Feb 16, 2025",
-  },
-  {
-    id: "txn_008",
-    user: "Tom Eriksson",
-    email: "tom@nordicdev.se",
-    plan: "Pro",
-    amount: 79,
-    status: "pending" as const,
-    date: "Feb 16, 2025",
+    date: "Feb 11, 2024",
   },
 ];
 
 type Period = "7d" | "30d" | "90d" | "1y";
 
-const periodLabels: Record<Period, string> = {
-  "7d": "Last 7 days",
-  "30d": "Last 30 days",
-  "90d": "Last 90 days",
-  "1y": "Last 12 months",
+const PERIODS: Period[] = ["7d", "30d", "90d", "1y"];
+
+const activeUsersMap: Record<Period, typeof activeUsersData7d> = {
+  "7d": activeUsersData7d,
+  "30d": activeUsersData30d,
+  "90d": activeUsersData90d,
+  "1y": activeUsersData1y,
 };
+
+const revenueMap: Record<Period, typeof revenueData7d> = {
+  "7d": revenueData7d,
+  "30d": revenueData30d,
+  "90d": revenueData90d,
+  "1y": revenueData1y,
+};
+
+const statusConfig = {
+  paid: {
+    label: "Paid",
+    icon: Check,
+    className: "bg-emerald-50 text-emerald-600 border border-emerald-100",
+  },
+  pending: {
+    label: "Pending",
+    icon: Clock,
+    className: "bg-amber-50 text-amber-600 border border-amber-100",
+  },
+  failed: {
+    label: "Failed",
+    icon: AlertCircle,
+    className: "bg-red-50 text-red-600 border border-red-100",
+  },
+};
+
+function formatValue(value: number, prefix: string, suffix: string): string {
+  if (prefix === "$") {
+    return `$${value.toLocaleString("en-US")}`;
+  }
+  return `${value.toLocaleString("en-US")}${suffix}`;
+}
 
 // ─── Custom Tooltip ───────────────────────────────────────────────────────────
 
-function CustomTooltip({
-  active,
-  payload,
-  label,
-  prefix = "",
-  suffix = "",
-}: {
-  active?: boolean;
-  payload?: Array<{ value: number; color?: string }>;
-  label?: string;
-  prefix?: string;
-  suffix?: string;
-}) {
-  if (!active || !payload || payload.length === 0) return null;
-  const val = payload[0]?.value ?? 0;
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; name: string; color: string }>; label?: string }) {
+  if (!active || !payload?.length) return null;
   return (
-    <div className="bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-      <p className="text-xs text-slate-400 mb-1">{label}</p>
-      <p className="text-sm font-semibold text-white">
-        {prefix}
-        {val.toLocaleString("en-US")}
-        {suffix}
-      </p>
-    </div>
-  );
-}
-
-// ─── Period Picker ────────────────────────────────────────────────────────────
-
-function PeriodPicker({
-  value,
-  onChange,
-}: {
-  value: Period;
-  onChange: (p: Period) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const periods: Period[] = ["7d", "30d", "90d", "1y"];
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-      >
-        {periodLabels[value]}
-        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full mt-1.5 w-40 bg-[#1E293B] border border-white/10 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-20 overflow-hidden">
-          {periods.map((p) => (
-            <button
-              key={p}
-              onClick={() => {
-                onChange(p);
-                setOpen(false);
-              }}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-sm text-slate-300 hover:bg-white/10 hover:text-white transition-colors duration-150"
-            >
-              {periodLabels[p]}
-              {value === p && <Check className="w-3.5 h-3.5 text-indigo-400" />}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Status Badge ─────────────────────────────────────────────────────────────
-
-function StatusBadge({ status }: { status: "paid" | "pending" | "failed" }) {
-  const config = {
-    paid: {
-      label: "Paid",
-      icon: Check,
-      className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-    },
-    pending: {
-      label: "Pending",
-      icon: Clock,
-      className: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-    },
-    failed: {
-      label: "Failed",
-      icon: AlertCircle,
-      className: "bg-red-500/10 text-red-400 border-red-500/20",
-    },
-  };
-  const { label, icon: Icon, className } = config[status];
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${className}`}
-    >
-      <Icon className="w-3 h-3" />
-      {label}
-    </span>
-  );
-}
-
-// ─── KPI Card ─────────────────────────────────────────────────────────────────
-
-function KPICardWidget({
-  card,
-}: {
-  card: (typeof kpiCards)[number];
-}) {
-  const isPositive = card.change >= 0;
-  const isChurn = card.id === "churn";
-  const good = isChurn ? !isPositive : isPositive;
-
-  return (
-    <motion.div
-      variants={scaleIn}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="relative bg-[#1E293B]/80 border border-white/8 rounded-2xl p-5 overflow-hidden group cursor-default"
+    <div
       style={{
-        boxShadow: `0 1px 2px rgba(0,0,0,0.08), 0 8px 24px -8px rgba(0,0,0,0.2)`,
+        background: "#FFFFFF",
+        border: "1px solid rgba(0,0,0,0.08)",
+        borderRadius: 12,
+        padding: "10px 14px",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
       }}
     >
-      {/* Glow */}
-      <div
-        className="absolute -top-6 -right-6 w-24 h-24 rounded-full blur-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-300"
-        style={{ background: card.glow }}
-      />
-      <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center"
-            style={{ background: `${card.color}18`, border: `1px solid ${card.color}30` }}
-          >
-            <card.icon className="w-5 h-5" style={{ color: card.color }} />
-          </div>
-          <span
-            className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
-              good
-                ? "bg-emerald-500/10 text-emerald-400"
-                : "bg-red-500/10 text-red-400"
-            }`}
-          >
-            {good ? (
-              <ArrowUpRight className="w-3 h-3" />
-            ) : (
-              <ArrowDownRight className="w-3 h-3" />
-            )}
-            {Math.abs(card.change)}
-            {card.id === "churn" ? "pp" : "%"}
-          </span>
-        </div>
-        <p className="text-2xl font-bold text-white tracking-tight">
-          {card.prefix}
-          {card.value.toLocaleString("en-US")}
-          {card.suffix}
+      <p style={{ color: "#9C9590", fontSize: 11, marginBottom: 6 }}>{label}</p>
+      {payload.map((entry) => (
+        <p key={entry.name} style={{ color: "#1E1B18", fontSize: 13, fontWeight: 600 }}>
+          <span style={{ color: entry.color, marginRight: 6 }}>●</span>
+          {entry.name === "revenue" || entry.name === "Revenue"
+            ? `$${entry.value.toLocaleString("en-US")}`
+            : entry.value.toLocaleString("en-US")}
         </p>
-        <p className="text-sm text-slate-400 mt-1">{card.label}</p>
-        <p className="text-xs text-slate-500 mt-0.5">{card.changeLabel}</p>
-      </div>
-    </motion.div>
+      ))}
+    </div>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
   const t = useTranslations();
-  const [period, setPeriod] = useState<Period>("30d");
+  const [activeUsersPeriod, setActiveUsersPeriod] = useState<Period>("30d");
+  const [revenuePeriod, setRevenuePeriod] = useState<Period>("30d");
 
-  const activeUsersMap: Record<Period, typeof activeUsersData7d> = {
-    "7d": activeUsersData7d,
-    "30d": activeUsersData30d,
-    "90d": activeUsersData90d,
-    "1y": activeUsersData1y,
-  };
+  const activeUsersChartData = useMemo(
+    () => activeUsersMap[activeUsersPeriod],
+    [activeUsersPeriod]
+  );
 
-  const revenueMap: Record<Period, typeof revenueData7d> = {
-    "7d": revenueData7d,
-    "30d": revenueData30d,
-    "90d": revenueData90d,
-    "1y": revenueData1y,
-  };
-
-  const activeUsersChartData = useMemo(() => activeUsersMap[period], [period]);
-  const revenueChartData = useMemo(() => revenueMap[period], [period]);
+  const revenueChartData = useMemo(
+    () => revenueMap[revenuePeriod],
+    [revenuePeriod]
+  );
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white">
-      {/* Ambient background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-500/5 rounded-full blur-[100px]" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
+    <div className="min-h-screen bg-[#FAF7F2] pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={staggerContainer}
+          variants={fadeInUp}
           className="mb-8"
         >
-          <motion.div variants={fadeInUp} className="flex items-start justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-white">
-                {t("dashboard.title")}
-              </h1>
-              <p className="text-slate-400 mt-1 text-sm">
-                {t("dashboard.subtitle")}
-              </p>
-            </div>
-            <PeriodPicker value={period} onChange={setPeriod} />
-          </motion.div>
+          <h1 className="text-3xl font-bold text-[#1E1B18] tracking-tight">
+            Dashboard
+          </h1>
+          <p className="mt-1 text-sm text-[#6B6560]">
+            Monitor your key metrics and business performance at a glance.
+          </p>
         </motion.div>
 
         {/* KPI Cards */}
@@ -483,321 +354,373 @@ export default function DashboardPage() {
           variants={staggerContainer}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
-          {kpiCards.map((card) => (
-            <KPICardWidget key={card.id} card={card} />
-          ))}
+          {kpiCards.map((card) => {
+            const Icon = card.icon;
+            const isPositive = card.change >= 0;
+            const isChurn = card.id === "churn";
+            const goodChange = isChurn ? !isPositive : isPositive;
+
+            return (
+              <motion.div
+                key={card.id}
+                variants={scaleIn}
+                className="bg-white border border-black/8 shadow-sm rounded-2xl p-5 flex flex-col gap-3"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-[#6B6560] uppercase tracking-wider">
+                    {card.label}
+                  </span>
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: `${card.color}18` }}
+                  >
+                    <Icon className="w-4 h-4" style={{ color: card.color }} />
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-[#1E1B18] tracking-tight">
+                  {formatValue(card.value, card.prefix, card.suffix)}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {goodChange ? (
+                    <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />
+                  ) : (
+                    <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />
+                  )}
+                  <span
+                    className={`text-xs font-semibold ${
+                      goodChange ? "text-emerald-500" : "text-red-500"
+                    }`}
+                  >
+                    {Math.abs(card.change)}%
+                  </span>
+                  <span className="text-xs text-[#6B6560]">{card.changeLabel}</span>
+                </div>
+              </motion.div>
+            );
+          })}
         </motion.div>
 
-        {/* Active Users Area Chart */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={fadeInUp}
-          className="bg-[#1E293B]/80 border border-white/8 rounded-2xl p-6 mb-6 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
-        >
-          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <div>
-              <h2 className="text-base font-semibold text-white">
-                {t("dashboard.activeUsersTrend")}
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {t("dashboard.activeUsersDesc")}
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span className="w-3 h-0.5 rounded-full bg-indigo-400 inline-block" />
-              {t("dashboard.activeUsers")}
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={activeUsersChartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-              <defs>
-                <linearGradient id="usersGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366F1" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis
-                dataKey="date"
-                tick={{ fill: "#64748B", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "#64748B", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(v: number) =>
-                  v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)
-                }
-              />
-              <Tooltip
-                content={
-                  <CustomTooltip prefix="" suffix=" users" />
-                }
-              />
-              <Area
-                type="monotone"
-                dataKey="users"
-                stroke="#6366F1"
-                strokeWidth={2}
-                fill="url(#usersGrad)"
-                dot={false}
-                activeDot={{ r: 5, fill: "#6366F1", stroke: "#0F172A", strokeWidth: 2 }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        {/* Revenue + Plan Breakdown */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-          {/* Revenue Line Chart */}
+        {/* Charts Row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          {/* Active Users Area Chart */}
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={slideInLeft}
-            className="lg:col-span-3 bg-[#1E293B]/80 border border-white/8 rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
+            animate="visible"
+            variants={fadeInUp}
+            className="lg:col-span-2 bg-white border border-black/8 shadow-sm rounded-2xl p-6"
           >
-            <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-base font-semibold text-white">
-                  {t("dashboard.revenueOverTime")}
-                </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  {t("dashboard.revenueDesc")}
-                </p>
+                <h2 className="text-base font-semibold text-[#1E1B18]">Active Users</h2>
+                <p className="text-xs text-[#6B6560] mt-0.5">Unique active users over time</p>
               </div>
-              <div className="flex items-center gap-2 text-xs text-slate-400">
-                <span className="w-3 h-0.5 rounded-full bg-cyan-400 inline-block" />
-                {t("dashboard.revenue")}
+              <div className="flex items-center gap-1 bg-[#F3EFE8] rounded-lg p-1">
+                {PERIODS.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setActiveUsersPeriod(p)}
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                      activeUsersPeriod === p
+                        ? "bg-indigo-500 text-white shadow-sm"
+                        : "bg-black/5 text-[#6B6560] hover:bg-black/8 hover:text-[#1E1B18]"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={revenueChartData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+            <ResponsiveContainer width="100%" height={240}>
+              <AreaChart data={activeUsersChartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="usersGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
                 <XAxis
                   dataKey="date"
-                  tick={{ fill: "#64748B", fontSize: 11 }}
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fill: "#64748B", fontSize: 11 }}
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(v: number) =>
-                    v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`
-                  }
                 />
-                <Tooltip
-                  content={<CustomTooltip prefix="$" suffix="" />}
-                />
-                <Line
+                <Tooltip content={<CustomTooltip />} />
+                <Area
                   type="monotone"
-                  dataKey="revenue"
+                  dataKey="users"
                   stroke="#22D3EE"
                   strokeWidth={2}
+                  fill="url(#usersGrad)"
                   dot={false}
-                  activeDot={{ r: 5, fill: "#22D3EE", stroke: "#0F172A", strokeWidth: 2 }}
+                  activeDot={{ r: 4, fill: "#22D3EE" }}
                 />
-              </LineChart>
+              </AreaChart>
             </ResponsiveContainer>
           </motion.div>
 
-          {/* Plan Breakdown Donut */}
+          {/* Plan Breakdown Pie */}
           <motion.div
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={slideInRight}
-            className="lg:col-span-2 bg-[#1E293B]/80 border border-white/8 rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
+            animate="visible"
+            variants={fadeInUp}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
           >
-            <div className="mb-4">
-              <h2 className="text-base font-semibold text-white">
-                {t("dashboard.planBreakdown")}
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {t("dashboard.planBreakdownDesc")}
-              </p>
+            <div className="mb-6">
+              <h2 className="text-base font-semibold text-[#1E1B18]">Plan Breakdown</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Subscription distribution</p>
             </div>
-            <ResponsiveContainer width="100%" height={160}>
+            <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
-                  data={planBreakdown}
+                  data={planData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={48}
-                  outerRadius={72}
+                  innerRadius={52}
+                  outerRadius={80}
                   paddingAngle={3}
                   dataKey="value"
-                  stroke="none"
                 >
-                  {planBreakdown.map((entry) => (
-                    <Cell
-                      key={entry.name}
-                      fill={PLAN_COLORS[entry.name] ?? "#6366F1"}
-                    />
+                  {planData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload || payload.length === 0) return null;
-                    const item = payload[0];
-                    return (
-                      <div className="bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                        <p className="text-xs text-slate-400 mb-1">{item?.name}</p>
-                        <p className="text-sm font-semibold text-white">
-                          {(item?.value as number ?? 0)}%
-                        </p>
-                      </div>
-                    );
+                  contentStyle={{
+                    background: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    borderRadius: 10,
+                    color: "#1E1B18",
                   }}
+                  formatter={(value: number) => [`${value}%`, ""]}
                 />
               </PieChart>
             </ResponsiveContainer>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              {planBreakdown.map((plan) => (
-                <div key={plan.name} className="flex items-center gap-2">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                    style={{ background: PLAN_COLORS[plan.name] ?? "#6366F1" }}
-                  />
-                  <span className="text-xs text-slate-400 truncate">{plan.name}</span>
-                  <span className="text-xs font-medium text-white ml-auto">{plan.value}%</span>
+            <div className="mt-4 space-y-2">
+              {planData.map((item) => (
+                <div key={item.name} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                      style={{ background: item.color }}
+                    />
+                    <span className="text-xs text-[#6B6560]">{item.name}</span>
+                  </div>
+                  <span className="text-xs font-semibold text-[#1E1B18]">{item.value}%</span>
                 </div>
               ))}
             </div>
           </motion.div>
         </div>
 
+        {/* Charts Row 2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Revenue Line Chart */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-base font-semibold text-[#1E1B18]">Revenue</h2>
+                <p className="text-xs text-[#6B6560] mt-0.5">Total revenue over time</p>
+              </div>
+              <div className="flex items-center gap-1 bg-[#F3EFE8] rounded-lg p-1">
+                {PERIODS.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setRevenuePeriod(p)}
+                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all duration-200 ${
+                      revenuePeriod === p
+                        ? "bg-indigo-500 text-white shadow-sm"
+                        : "bg-black/5 text-[#6B6560] hover:bg-black/8 hover:text-[#1E1B18]"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={revenueChartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#6366F1"
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 4, fill: "#6366F1" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </motion.div>
+
+          {/* MRR Growth Area */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
+          >
+            <div className="mb-6">
+              <h2 className="text-base font-semibold text-[#1E1B18]">MRR Growth</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Monthly recurring revenue trend</p>
+            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart
+                data={[
+                  { month: "Mar", mrr: 18200 },
+                  { month: "Apr", mrr: 21400 },
+                  { month: "May", mrr: 24600 },
+                  { month: "Jun", mrr: 27800 },
+                  { month: "Jul", mrr: 30200 },
+                  { month: "Aug", mrr: 33500 },
+                  { month: "Sep", mrr: 36100 },
+                  { month: "Oct", mrr: 38700 },
+                  { month: "Nov", mrr: 40200 },
+                  { month: "Dec", mrr: 41500 },
+                  { month: "Jan", mrr: 42100 },
+                  { month: "Feb", mrr: 42816 },
+                ]}
+                margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    borderRadius: 10,
+                    color: "#1E1B18",
+                  }}
+                  formatter={(v: number) => [`$${v.toLocaleString("en-US")}`, "MRR"]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="mrr"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  fill="url(#mrrGrad)"
+                  dot={false}
+                  activeDot={{ r: 4, fill: "#10B981" }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </motion.div>
+        </div>
+
         {/* Transactions Table */}
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
+          animate="visible"
           variants={fadeInUp}
-          className="bg-[#1E293B]/80 border border-white/8 rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_24px_-8px_rgba(0,0,0,0.2)]"
+          className="bg-white border border-black/8 shadow-sm rounded-2xl overflow-hidden"
         >
-          <div className="flex items-center justify-between px-6 py-5 border-b border-white/8 flex-wrap gap-3">
-            <div>
-              <h2 className="text-base font-semibold text-white">
-                {t("dashboard.recentTransactions")}
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {t("dashboard.transactionsDesc")}
-              </p>
-            </div>
-            <span className="text-xs text-slate-500 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-              {transactions.length} {t("dashboard.entries")}
-            </span>
+          <div className="px-6 py-5 border-b border-black/5">
+            <h2 className="text-base font-semibold text-[#1E1B18]">Recent Transactions</h2>
+            <p className="text-xs text-[#6B6560] mt-0.5">Latest billing activity across all accounts</p>
           </div>
-
-          {/* Desktop table */}
-          <div className="hidden md:block overflow-x-auto">
+          <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/5">
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    {t("dashboard.colUser")}
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    {t("dashboard.colPlan")}
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    {t("dashboard.colAmount")}
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    {t("dashboard.colStatus")}
-                  </th>
-                  <th className="text-left text-xs font-medium text-slate-500 uppercase tracking-wider px-6 py-3">
-                    {t("dashboard.colDate")}
-                  </th>
+                <tr className="border-b border-black/5">
+                  {["Transaction", "Customer", "Plan", "Amount", "Status", "Date"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-6 py-3 text-left text-xs font-semibold text-[#6B6560] uppercase tracking-wider"
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {(transactions ?? []).map((tx, i) => (
-                  <motion.tr
-                    key={tx.id}
-                    initial={{ opacity: 0, x: -8 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.04, duration: 0.3, ease: "easeOut" }}
-                    className="border-b border-white/5 last:border-0 hover:bg-white/3 transition-colors duration-150 group"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500/30 to-cyan-500/30 border border-white/10 flex items-center justify-center text-xs font-semibold text-white flex-shrink-0">
-                          {tx.user?.charAt(0) ?? "?"}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-white leading-tight">
-                            {tx.user}
-                          </p>
-                          <p className="text-xs text-slate-500">{tx.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className="text-xs font-medium px-2.5 py-1 rounded-full border"
-                        style={{
-                          color: PLAN_COLORS[tx.plan] ?? "#6366F1",
-                          background: `${PLAN_COLORS[tx.plan] ?? "#6366F1"}15`,
-                          borderColor: `${PLAN_COLORS[tx.plan] ?? "#6366F1"}30`,
-                        }}
-                      >
-                        {tx.plan}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-semibold text-white">
-                        ${(tx.amount ?? 0).toLocaleString("en-US")}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <StatusBadge status={tx.status} />
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm text-slate-400">{tx.date}</span>
-                    </td>
-                  </motion.tr>
-                ))}
+                {transactions.map((txn, i) => {
+                  const status = statusConfig[txn.status];
+                  const StatusIcon = status.icon;
+                  return (
+                    <tr
+                      key={txn.id}
+                      className={`border-b border-black/5 transition-colors hover:bg-black/[0.02] ${
+                        i === transactions.length - 1 ? "border-b-0" : ""
+                      }`}
+                    >
+                      <td className="px-6 py-4 text-xs font-mono text-[#6B6560]">{txn.id}</td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-[#1E1B18]">{txn.user}</div>
+                        <div className="text-xs text-[#6B6560]">{txn.email}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className="text-xs font-medium px-2 py-0.5 rounded-full"
+                          style={{
+                            background: `${PLAN_COLORS[txn.plan]}18`,
+                            color: PLAN_COLORS[txn.plan],
+                          }}
+                        >
+                          {txn.plan}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-semibold text-[#1E1B18]">
+                        ${txn.amount.toLocaleString("en-US")}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
+                            status.className
+                          }`}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {status.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-xs text-[#6B6560]">{txn.date}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
-          </div>
-
-          {/* Mobile cards */}
-          <div className="md:hidden divide-y divide-white/5">
-            {(transactions ?? []).map((tx) => (
-              <div key={tx.id} className="px-4 py-4 flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500/30 to-cyan-500/30 border border-white/10 flex items-center justify-center text-xs font-semibold text-white flex-shrink-0">
-                    {tx.user?.charAt(0) ?? "?"}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-white">{tx.user}</p>
-                    <p className="text-xs text-slate-500">{tx.email}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{tx.date}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1.5">
-                  <span className="text-sm font-semibold text-white">
-                    ${(tx.amount ?? 0).toLocaleString("en-US")}
-                  </span>
-                  <StatusBadge status={tx.status} />
-                </div>
-              </div>
-            ))}
           </div>
         </motion.div>
       </div>
     </div>
   );
 }
-
-// ─── Missing import fix ───────────────────────────────────────────────────────
-// slideInLeft / slideInRight used above — import them
-import { slideInLeft, slideInRight, staggerContainer } from "@/lib/motion";

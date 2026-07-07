@@ -46,78 +46,50 @@ type SortKey = "name" | "email" | "plan" | "status" | "joined";
 type SortDir = "asc" | "desc";
 
 const STATUS_CONFIG: Record<string, { label: string; dot: string; text: string; bg: string }> = {
-  active: { label: "Active", dot: "bg-emerald-400", text: "text-emerald-400", bg: "bg-emerald-400/10" },
-  inactive: { label: "Inactive", dot: "bg-slate-500", text: "text-slate-400", bg: "bg-slate-500/10" },
-  pending: { label: "Pending", dot: "bg-amber-400", text: "text-amber-400", bg: "bg-amber-400/10" },
+  active: { label: "Active", dot: "bg-emerald-500", text: "text-emerald-600", bg: "bg-emerald-50" },
+  inactive: { label: "Inactive", dot: "bg-slate-400", text: "text-slate-500", bg: "bg-slate-100" },
+  pending: { label: "Pending", dot: "bg-amber-500", text: "text-amber-600", bg: "bg-amber-50" },
 };
 
 const PLAN_TEXT: Record<string, string> = {
-  Starter: "text-indigo-400",
-  Pro: "text-cyan-400",
-  Business: "text-amber-400",
-  Enterprise: "text-emerald-400",
+  Starter: "text-indigo-600",
+  Pro: "text-cyan-600",
+  Business: "text-amber-600",
+  Enterprise: "text-emerald-600",
 };
 
 const PLAN_BG: Record<string, string> = {
-  Starter: "bg-indigo-400/10 border-indigo-400/20",
-  Pro: "bg-cyan-400/10 border-cyan-400/20",
-  Business: "bg-amber-400/10 border-amber-400/20",
-  Enterprise: "bg-emerald-400/10 border-emerald-400/20",
+  Starter: "bg-indigo-50 border-indigo-200",
+  Pro: "bg-cyan-50 border-cyan-200",
+  Business: "bg-amber-50 border-amber-200",
+  Enterprise: "bg-emerald-50 border-emerald-200",
 };
 
 const AVATAR_COLORS = [
   "from-indigo-500 to-purple-500",
   "from-cyan-500 to-blue-500",
-  "from-emerald-500 to-teal-500",
   "from-amber-500 to-orange-500",
+  "from-emerald-500 to-teal-500",
   "from-pink-500 to-rose-500",
 ];
 
-function getAvatarGradient(id: string): string {
-  const index = id.charCodeAt(1) % AVATAR_COLORS.length;
-  return AVATAR_COLORS[index] ?? AVATAR_COLORS[0];
-}
+const PAGE_SIZE = 8;
 
-const rowVariants: Variants = {
-  hidden: { opacity: 0, x: -12 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.35, ease: "easeOut" },
-  },
-};
-
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-        <p className="text-xs text-slate-400 mb-1">{label}</p>
-        <p className="text-lg font-semibold text-white">{payload[0]?.value ?? 0} users</p>
-      </div>
-    );
-  }
-  return null;
-};
+const kpiSummary = [
+  { label: "Total Users", value: "15", icon: Users, color: "#6366F1" },
+  { label: "Active", value: "11", icon: UserCheck, color: "#10B981" },
+  { label: "New This Month", value: "4", icon: UserPlus, color: "#22D3EE" },
+];
 
 export default function UsersPage() {
   const t = useTranslations();
+
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [planFilter, setPlanFilter] = useState("all");
   const [sortKey, setSortKey] = useState<SortKey>("joined");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [planFilter, setPlanFilter] = useState("All");
-
-  const totalUsers = MOCK_USERS.length;
-  const activeUsers = MOCK_USERS.filter((u) => u.status === "active").length;
-  const newThisMonth = MOCK_USERS.filter((u) => u.joined >= "2024-05-01").length;
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-  };
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     let rows = [...MOCK_USERS];
@@ -126,209 +98,157 @@ export default function UsersPage() {
       rows = rows.filter(
         (u) =>
           u.name.toLowerCase().includes(q) ||
-          u.email.toLowerCase().includes(q) ||
-          u.plan.toLowerCase().includes(q)
+          u.email.toLowerCase().includes(q)
       );
     }
-    if (planFilter !== "All") {
-      rows = rows.filter((u) => u.plan === planFilter);
-    }
+    if (statusFilter !== "all") rows = rows.filter((u) => u.status === statusFilter);
+    if (planFilter !== "all") rows = rows.filter((u) => u.plan === planFilter);
     rows.sort((a, b) => {
-      const av = a[sortKey] ?? "";
-      const bv = b[sortKey] ?? "";
+      const av = a[sortKey];
+      const bv = b[sortKey];
       const cmp = av < bv ? -1 : av > bv ? 1 : 0;
       return sortDir === "asc" ? cmp : -cmp;
     });
     return rows;
-  }, [search, sortKey, sortDir, planFilter]);
+  }, [search, statusFilter, planFilter, sortKey, sortDir]);
 
-  const SortIcon = ({ col }: { col: SortKey }) => {
-    if (sortKey !== col) return <ArrowUpDown className="w-3.5 h-3.5 text-slate-600" />;
-    return sortDir === "asc"
-      ? <ChevronUp className="w-3.5 h-3.5 text-indigo-400" />
-      : <ChevronDown className="w-3.5 h-3.5 text-indigo-400" />;
-  };
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+    setPage(1);
+  }
+
+  function SortIcon({ col }: { col: SortKey }) {
+    if (sortKey !== col)
+      return <ArrowUpDown className="w-3.5 h-3.5 text-[#9C9590]" />;
+    return sortDir === "asc" ? (
+      <ChevronUp className="w-3.5 h-3.5 text-indigo-500" />
+    ) : (
+      <ChevronDown className="w-3.5 h-3.5 text-indigo-500" />
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-[#0B1120] text-[#F8FAFC] pt-24 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-
-        {/* Page Header */}
+    <div className="min-h-screen bg-[#FAF7F2] pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeInUp}
-          className="space-y-1"
+          className="mb-8"
         >
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
-            {t("users.title")}
+          <h1 className="text-3xl font-bold text-[#1E1B18] tracking-tight">
+            Users
           </h1>
-          <p className="text-slate-400 text-base leading-relaxed">
-            {t("users.subtitle")}
+          <p className="mt-1 text-sm text-[#6B6560]">
+            Manage and monitor all registered users across your platform.
           </p>
         </motion.div>
 
-        {/* KPI Summary Strip */}
+        {/* KPI Summary Cards */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
         >
-          {[
-            {
-              icon: Users,
-              label: t("users.kpi.total"),
-              value: totalUsers,
-              color: "text-indigo-400",
-              bg: "bg-indigo-400/10",
-              glow: "shadow-[0_0_24px_rgba(99,102,241,0.15)]",
-            },
-            {
-              icon: UserCheck,
-              label: t("users.kpi.active"),
-              value: activeUsers,
-              color: "text-emerald-400",
-              bg: "bg-emerald-400/10",
-              glow: "shadow-[0_0_24px_rgba(16,185,129,0.15)]",
-            },
-            {
-              icon: UserPlus,
-              label: t("users.kpi.new"),
-              value: newThisMonth,
-              color: "text-cyan-400",
-              bg: "bg-cyan-400/10",
-              glow: "shadow-[0_0_24px_rgba(34,211,238,0.15)]",
-            },
-          ].map((kpi) => (
+          {kpiSummary.map((kpi) => (
             <motion.div
               key={kpi.label}
               variants={scaleIn}
-              whileHover={{ y: -3, transition: { duration: 0.2 } }}
-              className={`flex items-center gap-4 rounded-2xl border border-white/8 bg-[#111827]/80 backdrop-blur-sm px-5 py-4 ${kpi.glow}`}
+              className="bg-white border border-black/8 shadow-sm rounded-2xl p-5 flex items-center gap-4"
             >
-              <div className={`w-11 h-11 rounded-xl ${kpi.bg} flex items-center justify-center flex-shrink-0`}>
-                <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
+              <div
+                className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                style={{ background: kpi.color + "18" }}
+              >
+                <kpi.icon className="w-5 h-5" style={{ color: kpi.color }} />
               </div>
               <div>
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{kpi.label}</p>
-                <p className={`text-2xl font-bold ${kpi.color} mt-0.5`}>{kpi.value}</p>
+                <p className="text-xs font-medium text-[#6B6560] uppercase tracking-wider">
+                  {kpi.label}
+                </p>
+                <p className="text-2xl font-bold text-[#1E1B18] mt-0.5">
+                  {kpi.value}
+                </p>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Plan Distribution Chart */}
+        {/* Search & Filters */}
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          variants={fadeIn}
-          className="rounded-2xl border border-white/8 bg-[#111827]/80 backdrop-blur-sm p-6"
-        >
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-base font-semibold text-white">{t("users.chart.title")}</h2>
-              <p className="text-xs text-slate-500 mt-0.5">{t("users.chart.subtitle")}</p>
-            </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              {PLAN_DISTRIBUTION.map((p) => (
-                <span key={p.name} className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-                  {p.name}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={PLAN_DISTRIBUTION} barSize={40} margin={{ top: 4, right: 8, left: -16, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis
-                  dataKey="name"
-                  tick={{ fill: "#94A3B8", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{ fill: "#94A3B8", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
-                  allowDecimals={false}
-                />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
-                <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                  {PLAN_DISTRIBUTION.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-
-        {/* Table Controls */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-40px" }}
+          animate="visible"
           variants={fadeInUp}
-          className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between"
+          className="bg-white border border-black/8 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row gap-3"
         >
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9C9590]" />
             <input
               type="text"
+              placeholder="Search by name or email…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("users.search.placeholder")}
-              className="w-full bg-[#111827] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="w-full bg-[#FAF7F2] border border-black/10 text-[#1E1B18] placeholder-[#9C9590] rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 transition-all duration-200"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-500" />
-            <span className="text-xs text-slate-500 mr-1">{t("users.filter.plan")}</span>
-            {["All", "Starter", "Pro", "Business", "Enterprise"].map((p) => (
-              <button
-                key={p}
-                onClick={() => setPlanFilter(p)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
-                  planFilter === p
-                    ? "bg-indigo-500 text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]"
-                    : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/8"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
+            <Filter className="w-4 h-4 text-[#9C9590] flex-shrink-0" />
+            <select
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+              className="bg-white border border-black/8 text-[#1E1B18] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all duration-200 cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="pending">Pending</option>
+            </select>
+            <select
+              value={planFilter}
+              onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
+              className="bg-white border border-black/8 text-[#1E1B18] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all duration-200 cursor-pointer"
+            >
+              <option value="all">All Plans</option>
+              <option value="Starter">Starter</option>
+              <option value="Pro">Pro</option>
+              <option value="Business">Business</option>
+              <option value="Enterprise">Enterprise</option>
+            </select>
           </div>
         </motion.div>
 
         {/* User Table */}
         <motion.div
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-40px" }}
+          animate="visible"
           variants={fadeIn}
-          className="rounded-2xl border border-white/8 bg-[#111827]/80 backdrop-blur-sm overflow-hidden"
+          className="bg-white border border-black/8 shadow-sm rounded-2xl overflow-hidden mb-8"
         >
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-white/8">
-                  {(
-                    [
-                      { key: "name" as SortKey, label: t("users.table.name") },
-                      { key: "email" as SortKey, label: t("users.table.email") },
-                      { key: "plan" as SortKey, label: t("users.table.plan") },
-                      { key: "status" as SortKey, label: t("users.table.status") },
-                      { key: "joined" as SortKey, label: t("users.table.joined") },
-                    ] as Array<{ key: SortKey; label: string }>
-                  ).map((col) => (
+                <tr className="bg-[#F3EFE8] border-b border-black/5">
+                  {([
+                    { key: "name", label: "User" },
+                    { key: "email", label: "Email" },
+                    { key: "plan", label: "Plan" },
+                    { key: "status", label: "Status" },
+                    { key: "joined", label: "Joined" },
+                  ] as { key: SortKey; label: string }[]).map((col) => (
                     <th
                       key={col.key}
                       onClick={() => handleSort(col.key)}
-                      className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider cursor-pointer hover:text-slate-300 transition-colors duration-150 select-none"
+                      className="px-5 py-3.5 text-left text-xs font-semibold text-[#6B6560] uppercase tracking-wider cursor-pointer select-none hover:text-[#1E1B18] transition-colors duration-150"
                     >
                       <span className="flex items-center gap-1.5">
                         {col.label}
@@ -338,88 +258,179 @@ export default function UsersPage() {
                   ))}
                 </tr>
               </thead>
-              <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
-                {(filtered ?? []).map((user) => {
-                  const status = STATUS_CONFIG[user.status] ?? STATUS_CONFIG["inactive"];
-                  const planText = PLAN_TEXT[user.plan] ?? "text-slate-400";
-                  const planBg = PLAN_BG[user.plan] ?? "bg-white/5 border-white/10";
-                  const avatarGrad = getAvatarGradient(user.id);
-                  return (
-                    <motion.tr
-                      key={user.id}
-                      variants={rowVariants}
-                      whileHover={{ backgroundColor: "rgba(255,255,255,0.03)" }}
-                      className="border-b border-white/5 last:border-0 transition-colors duration-150"
-                    >
-                      {/* Name + Avatar */}
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-9 h-9 rounded-full bg-gradient-to-br ${avatarGrad} flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.3)]`}
-                          >
-                            {user.avatar}
-                          </div>
-                          <span className="font-medium text-white whitespace-nowrap">{user.name}</span>
-                        </div>
-                      </td>
-                      {/* Email */}
-                      <td className="px-5 py-4 text-slate-400 whitespace-nowrap">{user.email}</td>
-                      {/* Plan Badge */}
-                      <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${planBg} ${planText}`}
-                        >
-                          {user.plan}
-                        </span>
-                      </td>
-                      {/* Status */}
-                      <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ${status.bg} ${status.text}`}
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
-                          {status.label}
-                        </span>
-                      </td>
-                      {/* Join Date */}
-                      <td className="px-5 py-4 text-slate-400 whitespace-nowrap">
-                        {user.joined}
-                      </td>
-                    </motion.tr>
-                  );
-                })}
-                {filtered.length === 0 && (
+              <tbody>
+                {paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-5 py-16 text-center text-slate-500 text-sm">
-                      {t("users.table.empty")}
+                    <td colSpan={5} className="px-5 py-12 text-center text-[#6B6560]">
+                      No users match your filters.
                     </td>
                   </tr>
+                ) : (
+                  paginated.map((user, idx) => {
+                    const status = STATUS_CONFIG[user.status];
+                    const avatarGradient =
+                      AVATAR_COLORS[user.id.charCodeAt(1) % AVATAR_COLORS.length];
+                    return (
+                      <motion.tr
+                        key={user.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.04, duration: 0.3 }}
+                        className="border-b border-black/5 hover:bg-[#FAF7F2] transition-colors duration-150"
+                      >
+                        {/* User */}
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-8 h-8 rounded-full bg-gradient-to-br ${avatarGradient} flex items-center justify-center flex-shrink-0`}
+                            >
+                              <span className="text-xs font-semibold text-white">
+                                {user.avatar}
+                              </span>
+                            </div>
+                            <span className="font-medium text-[#1E1B18]">
+                              {user.name}
+                            </span>
+                          </div>
+                        </td>
+                        {/* Email */}
+                        <td className="px-5 py-4 text-[#6B6560]">
+                          {user.email}
+                        </td>
+                        {/* Plan */}
+                        <td className="px-5 py-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                              PLAN_BG[user.plan]
+                            } ${PLAN_TEXT[user.plan]}`}
+                          >
+                            {user.plan}
+                          </span>
+                        </td>
+                        {/* Status */}
+                        <td className="px-5 py-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                            {status.label}
+                          </span>
+                        </td>
+                        {/* Joined */}
+                        <td className="px-5 py-4 text-[#6B6560]">
+                          {new Date(user.joined).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </td>
+                      </motion.tr>
+                    );
+                  })
                 )}
-              </motion.tbody>
+              </tbody>
             </table>
           </div>
-          {/* Table Footer */}
-          <div className="px-5 py-3.5 border-t border-white/8 flex items-center justify-between">
-            <p className="text-xs text-slate-500">
-              {t("users.table.showing")} <span className="text-slate-300 font-medium">{filtered.length}</span> {t("users.table.of")} <span className="text-slate-300 font-medium">{totalUsers}</span> {t("users.table.users")}
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between px-5 py-4 border-t border-black/8">
+            <p className="text-xs text-[#6B6560]">
+              Showing{" "}
+              <span className="font-medium text-[#1E1B18]">
+                {Math.min((page - 1) * PAGE_SIZE + 1, filtered.length)}–
+                {Math.min(page * PAGE_SIZE, filtered.length)}
+              </span>{" "}
+              of{" "}
+              <span className="font-medium text-[#1E1B18]">{filtered.length}</span>{" "}
+              users
             </p>
-            <div className="flex items-center gap-1">
-              {[...Array(Math.ceil(filtered.length / 10))].map((_, i) => (
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-black/8 text-[#6B6560] hover:bg-[#F3EFE8] hover:text-[#1E1B18] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
-                  key={i}
-                  className={`w-7 h-7 rounded-lg text-xs font-medium transition-all duration-200 ${
-                    i === 0
-                      ? "bg-indigo-500 text-white"
-                      : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white"
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`w-8 h-8 rounded-lg text-xs font-medium transition-all duration-150 ${
+                    p === page
+                      ? "bg-indigo-500 text-white shadow-sm"
+                      : "bg-white border border-black/8 text-[#6B6560] hover:bg-[#F3EFE8] hover:text-[#1E1B18]"
                   }`}
                 >
-                  {i + 1}
+                  {p}
                 </button>
               ))}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-black/8 text-[#6B6560] hover:bg-[#F3EFE8] hover:text-[#1E1B18] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-150"
+              >
+                Next
+              </button>
             </div>
           </div>
         </motion.div>
+
+        {/* Plan Distribution Chart */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
+        >
+          <h2 className="text-base font-semibold text-[#1E1B18] mb-1">
+            Plan Distribution
+          </h2>
+          <p className="text-xs text-[#6B6560] mb-6">
+            Number of users per subscription plan
+          </p>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart
+              data={PLAN_DISTRIBUTION}
+              margin={{ top: 4, right: 16, left: -16, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="rgba(0,0,0,0.06)"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "#9C9590", fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fill: "#9C9590", fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "#FFFFFF",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  borderRadius: "12px",
+                  color: "#1E1B18",
+                  fontSize: 13,
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+                }}
+                cursor={{ fill: "rgba(0,0,0,0.04)" }}
+              />
+              <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={56}>
+                {PLAN_DISTRIBUTION.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </motion.div>
       </div>
-    </main>
+    </div>
   );
 }

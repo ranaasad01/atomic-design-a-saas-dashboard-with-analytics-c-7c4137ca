@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #FAF7F2;
+    --bg-secondary: #F3EFE8;
+    --bg-card: #FFFFFF;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --text-primary: #1E1B18;
+    --text-secondary: #6B6560;
+    --text-muted: #9C9590;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+}

@@ -111,17 +111,17 @@ const testimonials = [
     stars: 5,
   },
   {
-    quote: "The cohort charts alone saved us from a bad pricing decision. We saw the retention cliff before it became a crisis.",
+    quote: "The cohort charts alone saved us from a bad pricing decision. We saw exactly where users were dropping off and fixed it in a week.",
     name: "Marcus Webb",
-    role: "CEO, Stackform",
-    avatar: "/images/marcus-webb-ceo-stackform.jpg",
+    role: "CEO, Orbit Systems",
+    avatar: "/images/marcus-webb-ceo.jpg",
     stars: 5,
   },
   {
-    quote: "Setup took eight minutes. I timed it. The dashboard was showing real data before I finished my coffee.",
+    quote: "Setup took literally four minutes. I pasted the script, refreshed, and my first events were already flowing in. Incredible DX.",
     name: "Priya Nair",
-    role: "CTO, Orbit Labs",
-    avatar: "/images/priya-nair-cto-orbit-labs.jpg",
+    role: "Lead Engineer, Cascade",
+    avatar: "/images/priya-nair-lead-engineer.jpg",
     stars: 5,
   },
 ];
@@ -129,339 +129,369 @@ const testimonials = [
 const pricingPlans = [
   {
     name: "Starter",
-    price: 29,
-    description: "For indie hackers and early-stage products.",
-    features: ["Up to 50k events/mo", "7-day data retention", "3 dashboards", "Email alerts", "Community support"],
+    price: 49,
+    description: "Perfect for indie hackers and early-stage startups.",
+    features: [
+      "Up to 50k events/month",
+      "5 dashboards",
+      "7-day data retention",
+      "Email support",
+      "Core charts",
+    ],
     cta: "Start free trial",
-    highlight: false,
-    color: PLAN_COLORS["Starter"],
+    highlighted: false,
   },
   {
     name: "Pro",
-    price: 99,
-    description: "For growing teams that need deeper insight.",
-    features: ["Up to 2M events/mo", "90-day retention", "Unlimited dashboards", "Slack + email alerts", "Cohort analysis", "Priority support"],
+    price: 149,
+    description: "For growing teams that need deeper insights.",
+    features: [
+      "Up to 1M events/month",
+      "Unlimited dashboards",
+      "90-day data retention",
+      "Slack + email alerts",
+      "Cohort & funnel analysis",
+      "Custom segments",
+    ],
     cta: "Start free trial",
-    highlight: true,
-    color: PLAN_COLORS["Pro"],
+    highlighted: true,
   },
   {
     name: "Business",
-    price: 299,
-    description: "For scaling companies with complex needs.",
-    features: ["Up to 20M events/mo", "1-year retention", "Custom segments", "Webhook alerts", "SSO + RBAC", "Dedicated CSM"],
-    cta: "Start free trial",
-    highlight: false,
-    color: PLAN_COLORS["Business"],
+    price: 499,
+    description: "For scaling companies with advanced needs.",
+    features: [
+      "Up to 10M events/month",
+      "Unlimited dashboards",
+      "1-year data retention",
+      "Priority support",
+      "SSO & audit logs",
+      "Custom integrations",
+      "Dedicated CSM",
+    ],
+    cta: "Contact sales",
+    highlighted: false,
   },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function KPITile({ label, value, change }: { label: string; value: string; change: number }) {
-  const positive = change >= 0;
-  return (
-    <motion.div
-      variants={scaleIn}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-8px_rgba(0,0,0,0.3)] flex flex-col gap-3"
-    >
-      <span className="text-xs font-medium text-slate-400 uppercase tracking-widest">{label}</span>
-      <span className="text-2xl font-bold text-white tracking-tight">{value}</span>
-      <span className={`flex items-center gap-1 text-xs font-semibold ${positive ? "text-emerald-400" : "text-rose-400"}`}>
-        {positive ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-        {Math.abs(change)}% vs last month
-      </span>
-    </motion.div>
-  );
+function formatRevenue(v: number) {
+  if (v >= 1000) return `$${(v / 1000).toFixed(0)}k`;
+  return `$${v}`;
 }
 
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; name: string }>; label?: string }) => {
-  if (!active || !payload || payload.length === 0) return null;
-  return (
-    <div className="bg-[#1E293B] border border-white/10 rounded-xl px-4 py-3 shadow-xl text-sm">
-      <p className="text-slate-400 mb-1">{label}</p>
-      {payload.map((p, i) => (
-        <p key={i} className="text-white font-semibold">
-          {p.name === "revenue" ? `$${(p.value ?? 0).toLocaleString("en-US")}` : (p.value ?? 0).toLocaleString("en-US")}
-        </p>
-      ))}
-    </div>
-  );
-};
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
   const t = useTranslations();
-  const [activeChart, setActiveChart] = useState<"revenue" | "users">("revenue");
+  const [activeTab, setActiveTab] = useState<"revenue" | "users">("revenue");
 
   return (
-    <main className="min-h-screen bg-[#0F172A] text-white overflow-x-hidden" style={{ color: "#f59e0b", backgroundColor: "#22c55e" }}>
+    <div className="min-h-screen bg-[#FAF7F2] text-[#1E1B18]">
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Background glow */}
+      <section className="relative overflow-hidden pt-32 pb-24 px-4 sm:px-6 lg:px-8">
+        {/* Background orbs */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px]" />
-          <div className="absolute top-20 right-1/4 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]" />
+          <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-indigo-200/30 blur-[120px]" />
+          <div className="absolute bottom-[-5%] right-[10%] w-[500px] h-[500px] rounded-full bg-cyan-200/25 blur-[100px]" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-5xl mx-auto text-center">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            className="max-w-3xl"
+            className="space-y-6"
           >
-            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              {t("hero.badge")}
+            {/* Badge */}
+            <motion.div variants={fadeInUp} className="flex justify-center">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100">
+                <Sparkles className="w-3.5 h-3.5" />
+                Now with AI-powered anomaly detection
+              </span>
             </motion.div>
 
+            {/* Headline */}
             <motion.h1
               variants={fadeInUp}
-              className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.08] mb-6"
+              className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08]"
             >
-              {t("hero.headline1")}{" "}
-              <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-                {t("hero.headline2")}
-              </span>{" "}
-              {t("hero.headline3")}
+              <span className="text-[#1E1B18]">Analytics that</span>
+              <br />
+              <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+                move with you
+              </span>
             </motion.h1>
 
+            {/* Sub */}
             <motion.p
               variants={fadeInUp}
-              className="text-lg text-slate-400 leading-relaxed text-pretty max-w-xl mb-10"
+              className="max-w-2xl mx-auto text-lg sm:text-xl text-[#6B6560] leading-relaxed"
             >
-              {t("hero.subtext")}
+              {APP_TAGLINE} Track revenue, retention, and growth in one
+              beautifully designed workspace — no data team required.
             </motion.p>
 
-            <motion.div variants={fadeInUp} className="flex flex-wrap gap-4">
+            {/* CTAs */}
+            <motion.div
+              variants={fadeInUp}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2"
+            >
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-sm transition-all duration-300 shadow-[0_0_24px_rgba(99,102,241,0.4)] hover:shadow-[0_0_36px_rgba(99,102,241,0.6)] hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-semibold text-sm shadow-[0_4px_24px_rgba(99,102,241,0.4)] hover:shadow-[0_6px_32px_rgba(99,102,241,0.55)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
               >
-                {t("hero.cta_primary")}
+                Get started free
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/analytics"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl border border-black/15 text-[#1E1B18] font-semibold text-sm hover:bg-black/5 transition-all duration-200"
               >
-                {t("hero.cta_secondary")}
+                View live demo
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </motion.div>
-          </motion.div>
 
-          {/* Hero chart preview */}
+            {/* Social proof */}
+            <motion.p variants={fadeInUp} className="text-sm text-[#6B6560]">
+              Trusted by{" "}
+              <span className="text-[#1E1B18] font-semibold">2,400+</span> SaaS
+              teams worldwide
+            </motion.p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── KPI Cards ────────────────────────────────────────────────────── */}
+      <section className="px-4 sm:px-6 lg:px-8 pb-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={staggerContainer}
+          className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {kpis.map((kpi) => (
+            <motion.div
+              key={kpi.label}
+              variants={scaleIn}
+              className="bg-white border border-black/8 shadow-sm rounded-2xl p-5"
+            >
+              <p className="text-xs font-medium text-[#6B6560] uppercase tracking-wider mb-2">
+                {kpi.label}
+              </p>
+              <p className="text-2xl font-bold text-[#1E1B18] mb-2">{kpi.value}</p>
+              <div
+                className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${
+                  kpi.change >= 0
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "bg-red-50 text-red-500"
+                }`}
+              >
+                {kpi.change >= 0 ? (
+                  <ArrowUp className="w-3 h-3" />
+                ) : (
+                  <ArrowDown className="w-3 h-3" />
+                )}
+                {Math.abs(kpi.change)}%
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* ── Charts Preview ───────────────────────────────────────────────── */}
+      <section className="px-4 sm:px-6 lg:px-8 pb-24">
+        <div className="max-w-6xl mx-auto">
+          {/* Tab switcher */}
           <motion.div
             initial="hidden"
-            animate="visible"
-            variants={scaleIn}
-            className="mt-16 bg-white/5 border border-white/10 rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.3),0_24px_64px_-16px_rgba(0,0,0,0.5)] backdrop-blur-sm"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="flex items-center justify-between mb-6"
           >
-            {/* Mini KPI row */}
-            <motion.div
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
-            >
-              {kpis.map((k) => (
-                <KPITile key={k.label} label={k.label} value={k.value} change={k.change} />
+            <h2 className="text-xl font-bold text-[#1E1B18]">Performance Overview</h2>
+            <div className="flex items-center gap-1 bg-[#F3EFE8] rounded-xl p-1">
+              {(["revenue", "users"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    activeTab === tab
+                      ? "bg-white text-[#1E1B18] shadow-sm"
+                      : "text-[#6B6560] hover:text-[#1E1B18]"
+                  }`}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
               ))}
-            </motion.div>
-
-            {/* Chart toggle */}
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold text-slate-300">{t("hero.chart_title")}</h2>
-              <div className="flex gap-1 bg-white/5 rounded-lg p-1">
-                {(["revenue", "users"] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveChart(tab)}
-                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-all duration-200 ${
-                      activeChart === tab
-                        ? "bg-indigo-500 text-white shadow"
-                        : "text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    {tab === "revenue" ? t("hero.tab_revenue") : t("hero.tab_users")}
-                  </button>
-                ))}
-              </div>
             </div>
+          </motion.div>
 
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={revenueData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+          {/* Area chart */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={scaleIn}
+            className="bg-white border border-black/8 rounded-2xl p-6 mb-6"
+          >
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={revenueData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.35} />
+                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.25} />
                     <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.35} />
+                    <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.25} />
                     <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="month" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} />
-                {activeChart === "revenue" ? (
-                  <Area type="monotone" dataKey="revenue" stroke="#6366F1" strokeWidth={2} fill="url(#colorRevenue)" dot={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: "#6B6560", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#6B6560", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={activeTab === "revenue" ? formatRevenue : (v) => `${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    borderRadius: "12px",
+                    color: "#1E1B18",
+                    fontSize: 13,
+                  }}
+                  labelStyle={{ color: "#1E1B18", fontWeight: 600 }}
+                  itemStyle={{ color: "#6B6560" }}
+                />
+                {activeTab === "revenue" ? (
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#6366F1"
+                    strokeWidth={2}
+                    fill="url(#colorRevenue)"
+                    dot={false}
+                  />
                 ) : (
-                  <Area type="monotone" dataKey="users" stroke="#22D3EE" strokeWidth={2} fill="url(#colorUsers)" dot={false} />
+                  <Area
+                    type="monotone"
+                    dataKey="users"
+                    stroke="#22D3EE"
+                    strokeWidth={2}
+                    fill="url(#colorUsers)"
+                    dot={false}
+                  />
                 )}
               </AreaChart>
             </ResponsiveContainer>
           </motion.div>
-        </div>
-      </section>
 
-      {/* ── Features ─────────────────────────────────────────────────────── */}
-      <section id="features" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={staggerContainer}
-            className="text-center mb-16"
-          >
-            <motion.p variants={fadeInUp} className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-3">
-              {t("features.label")}
-            </motion.p>
-            <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-extrabold tracking-tight text-balance mb-4">
-              {t("features.title")}
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-slate-400 text-lg max-w-xl mx-auto text-pretty">
-              {t("features.subtitle")}
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-          >
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                variants={fadeInUp}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className={`relative bg-white/5 border border-white/10 rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-8px_rgba(0,0,0,0.3)] overflow-hidden group ${
-                  i === 0 ? "md:col-span-2 lg:col-span-1" : ""
-                }`}
-              >
-                <div
-                  className="absolute top-0 right-0 w-32 h-32 rounded-full blur-[60px] opacity-20 group-hover:opacity-30 transition-opacity duration-300"
-                  style={{ background: f.accent }}
-                />
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 shadow-lg"
-                  style={{ background: `${f.accent}22`, border: `1px solid ${f.accent}44` }}
-                >
-                  <f.icon className="w-5 h-5" style={{ color: f.accent }} />
-                </div>
-                <h3 className="text-base font-bold text-white mb-2">{f.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{f.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── Analytics Preview ─────────────────────────────────────────────── */}
-      <section id="analytics" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left: copy */}
+          {/* Bottom row: bar + pie */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Bar chart */}
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true }}
               variants={slideInLeft}
+              className="bg-white border border-black/8 rounded-2xl p-6"
             >
-              <p className="text-xs font-semibold text-cyan-400 uppercase tracking-widest mb-3">
-                {t("analytics.label")}
-              </p>
-              <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-balance mb-5">
-                {t("analytics.title")}
-              </h2>
-              <p className="text-slate-400 text-lg leading-relaxed text-pretty mb-8">
-                {t("analytics.body")}
-              </p>
-              <ul className="space-y-3 mb-8">
-                {[t("analytics.bullet1"), t("analytics.bullet2"), t("analytics.bullet3"), t("analytics.bullet4")].map((b) => (
-                  <li key={b} className="flex items-start gap-3 text-sm text-slate-300">
-                    <span className="mt-0.5 w-5 h-5 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
-                      <Check className="w-3 h-3 text-indigo-400" />
-                    </span>
-                    {b}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/analytics"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition-colors duration-200 group"
-              >
-                {t("analytics.cta")}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
+              <h3 className="text-sm font-semibold text-[#1E1B18] mb-4">Weekly Sessions</h3>
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={weeklyActivity} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                  <XAxis
+                    dataKey="day"
+                    tick={{ fill: "#6B6560", fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fill: "#6B6560", fontSize: 12 }}
+                    axisLine={false}
+                    tickLine={false}
+                    tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: "#FFFFFF",
+                      border: "1px solid rgba(0,0,0,0.08)",
+                      borderRadius: "12px",
+                      color: "#1E1B18",
+                      fontSize: 13,
+                    }}
+                    labelStyle={{ color: "#1E1B18", fontWeight: 600 }}
+                    itemStyle={{ color: "#6B6560" }}
+                  />
+                  <Bar dataKey="sessions" fill="#6366F1" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </motion.div>
 
-            {/* Right: two mini charts */}
+            {/* Pie chart */}
             <motion.div
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
+              viewport={{ once: true }}
               variants={slideInRight}
-              className="flex flex-col gap-5"
+              className="bg-white border border-black/8 rounded-2xl p-6"
             >
-              {/* Bar chart */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-8px_rgba(0,0,0,0.3)]">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-semibold text-slate-300">{t("analytics.chart1_title")}</span>
-                  <span className="text-xs text-slate-500 flex items-center gap-1"><Clock className="w-3 h-3" /> {t("analytics.chart1_period")}</span>
-                </div>
-                <ResponsiveContainer width="100%" height={140}>
-                  <BarChart data={weeklyActivity} margin={{ top: 0, right: 0, left: -24, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                    <XAxis dataKey="day" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="sessions" fill="#6366F1" radius={[4, 4, 0, 0]} />
-                  </BarChart>
+              <h3 className="text-sm font-semibold text-[#1E1B18] mb-4">Plan Distribution</h3>
+              <div className="flex items-center gap-6">
+                <ResponsiveContainer width={160} height={160}>
+                  <PieChart>
+                    <Pie
+                      data={planData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={48}
+                      outerRadius={72}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {planData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        background: "#FFFFFF",
+                        border: "1px solid rgba(0,0,0,0.08)",
+                        borderRadius: "12px",
+                        color: "#1E1B18",
+                        fontSize: 13,
+                      }}
+                      labelStyle={{ color: "#1E1B18", fontWeight: 600 }}
+                      itemStyle={{ color: "#6B6560" }}
+                    />
+                  </PieChart>
                 </ResponsiveContainer>
-              </div>
-
-              {/* Pie chart */}
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-8px_rgba(0,0,0,0.3)]">
-                <span className="text-sm font-semibold text-slate-300 block mb-4">{t("analytics.chart2_title")}</span>
-                <div className="flex items-center gap-6">
-                  <ResponsiveContainer width={120} height={120}>
-                    <PieChart>
-                      <Pie data={planData} cx="50%" cy="50%" innerRadius={36} outerRadius={56} paddingAngle={3} dataKey="value">
-                        {planData.map((entry) => (
-                          <Cell key={entry.name} fill={entry.color} />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="flex flex-col gap-2">
-                    {planData.map((p) => (
-                      <div key={p.name} className="flex items-center gap-2 text-xs text-slate-400">
-                        <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: p.color }} />
-                        <span className="text-slate-300 font-medium">{p.name}</span>
-                        <span className="ml-auto pl-4 font-semibold text-white">{p.value}%</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="flex flex-col gap-2.5">
+                  {planData.map((p) => (
+                    <div key={p.name} className="flex items-center gap-2">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                        style={{ background: p.color }}
+                      />
+                      <span className="text-sm text-[#6B6560]">{p.name}</span>
+                      <span className="text-sm font-semibold text-[#1E1B18] ml-auto pl-4">
+                        {p.value}%
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </motion.div>
@@ -469,22 +499,72 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Testimonials ─────────────────────────────────────────────────── */}
-      <section id="about" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* ── Features ─────────────────────────────────────────────────────── */}
+      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#F3EFE8]">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={staggerContainer}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mb-14"
           >
-            <motion.p variants={fadeInUp} className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-3">
-              {t("testimonials.label")}
-            </motion.p>
-            <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-extrabold tracking-tight text-balance">
-              {t("testimonials.title")}
-            </motion.h2>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mb-4">
+              <Zap className="w-3.5 h-3.5" />
+              Everything you need
+            </span>
+            <h2 className="text-4xl font-extrabold text-[#1E1B18] mb-4">
+              Built for modern SaaS teams
+            </h2>
+            <p className="text-lg text-[#6B6560] max-w-2xl mx-auto">
+              From real-time event streaming to enterprise-grade security, Pulse
+              has every layer covered.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            {features.map((f) => (
+              <motion.div
+                key={f.title}
+                variants={fadeInUp}
+                className="bg-white border border-black/8 shadow-sm rounded-2xl p-6 group hover:shadow-md transition-shadow duration-200"
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: `${f.accent}18` }}
+                >
+                  <f.icon className="w-5 h-5" style={{ color: f.accent }} />
+                </div>
+                <h3 className="text-base font-semibold text-[#1E1B18] mb-2">{f.title}</h3>
+                <p className="text-sm text-[#6B6560] leading-relaxed">{f.description}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Testimonials ─────────────────────────────────────────────────── */}
+      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#FAF7F2]">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mb-14"
+          >
+            <h2 className="text-4xl font-extrabold text-[#1E1B18] mb-4">
+              Loved by growth teams
+            </h2>
+            <p className="text-lg text-[#6B6560]">
+              Don&apos;t take our word for it.
+            </p>
           </motion.div>
 
           <motion.div
@@ -494,31 +574,25 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            {testimonials.map((t_item) => (
+            {testimonials.map((t) => (
               <motion.div
-                key={t_item.name}
-                variants={scaleIn}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-8px_rgba(0,0,0,0.3)] flex flex-col gap-4"
+                key={t.name}
+                variants={fadeInUp}
+                className="bg-white border border-black/8 shadow-sm rounded-2xl p-6 flex flex-col gap-4"
               >
-                <div className="flex gap-0.5">
-                  {Array.from({ length: t_item.stars }).map((_, i) => (
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: t.stars }).map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="text-sm text-slate-300 leading-relaxed flex-1">&ldquo;{t_item.quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-2 border-t border-white/10">
-                  <img
-                    src={t_item.avatar}
-                    alt={t_item.name}
-                    className="w-9 h-9 rounded-full object-cover ring-1 ring-white/10"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(t_item.name)}&background=6366F1&color=fff&size=36`;
-                    }}
-                  />
+                <p className="text-sm text-[#6B6560] leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3 pt-2 border-t border-black/8">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center text-white text-xs font-bold">
+                    {t.name.split(" ").map((n) => n[0]).join("")}
+                  </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">{t_item.name}</p>
-                    <p className="text-xs text-slate-500">{t_item.role}</p>
+                    <p className="text-sm font-semibold text-[#1E1B18]">{t.name}</p>
+                    <p className="text-xs text-[#6B6560]">{t.role}</p>
                   </div>
                 </div>
               </motion.div>
@@ -528,24 +602,25 @@ export default function HomePage() {
       </section>
 
       {/* ── Pricing ──────────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-white/[0.02]">
-        <div className="max-w-7xl mx-auto">
+      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#F3EFE8]">
+        <div className="max-w-5xl mx-auto">
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={staggerContainer}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            variants={fadeInUp}
+            className="text-center mb-14"
           >
-            <motion.p variants={fadeInUp} className="text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-3">
-              {t("pricing.label")}
-            </motion.p>
-            <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-extrabold tracking-tight text-balance mb-4">
-              {t("pricing.title")}
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-slate-400 text-lg max-w-md mx-auto">
-              {t("pricing.subtitle")}
-            </motion.p>
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100 mb-4">
+              <Sparkles className="w-3.5 h-3.5" />
+              Simple pricing
+            </span>
+            <h2 className="text-4xl font-extrabold text-[#1E1B18] mb-4">
+              Start free, scale as you grow
+            </h2>
+            <p className="text-lg text-[#6B6560]">
+              No hidden fees. Cancel anytime.
+            </p>
           </motion.div>
 
           <motion.div
@@ -553,51 +628,80 @@ export default function HomePage() {
             whileInView="visible"
             viewport={{ once: true, margin: "-60px" }}
             variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start"
           >
             {pricingPlans.map((plan) => (
               <motion.div
                 key={plan.name}
                 variants={scaleIn}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className={`relative rounded-2xl p-7 flex flex-col gap-5 shadow-[0_1px_2px_rgba(0,0,0,0.2),0_8px_24px_-8px_rgba(0,0,0,0.3)] ${
-                  plan.highlight
-                    ? "bg-indigo-500/10 border-2 border-indigo-500/50"
-                    : "bg-white/5 border border-white/10"
+                className={`rounded-2xl p-7 flex flex-col gap-5 ${
+                  plan.highlighted
+                    ? "bg-gradient-to-b from-indigo-600 to-indigo-700 text-white shadow-[0_8px_40px_rgba(99,102,241,0.4)] scale-[1.03]"
+                    : "bg-white border border-black/8 shadow-sm"
                 }`}
               >
-                {plan.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-indigo-500 text-white text-xs font-bold shadow-[0_0_16px_rgba(99,102,241,0.5)]">
-                    {t("pricing.popular")}
-                  </span>
-                )}
                 <div>
-                  <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: plan.color }}>
+                  <p
+                    className={`text-xs font-semibold uppercase tracking-widest mb-1 ${
+                      plan.highlighted ? "text-indigo-200" : "text-[#6B6560]"
+                    }`}
+                  >
                     {plan.name}
-                  </span>
-                  <div className="flex items-end gap-1 mt-2">
-                    <span className="text-4xl font-extrabold text-white tracking-tight">${plan.price}</span>
-                    <span className="text-slate-400 text-sm mb-1.5">{t("pricing.per_month")}</span>
+                  </p>
+                  <div className="flex items-end gap-1">
+                    <span
+                      className={`text-4xl font-extrabold ${
+                        plan.highlighted ? "text-white" : "text-[#1E1B18]"
+                      }`}
+                    >
+                      ${plan.price}
+                    </span>
+                    <span
+                      className={`text-sm mb-1.5 ${
+                        plan.highlighted ? "text-indigo-200" : "text-[#6B6560]"
+                      }`}
+                    >
+                      /mo
+                    </span>
                   </div>
-                  <p className="text-sm text-slate-400 mt-1">{plan.description}</p>
+                  <p
+                    className={`text-sm mt-1 ${
+                      plan.highlighted ? "text-indigo-100" : "text-[#6B6560]"
+                    }`}
+                  >
+                    {plan.description}
+                  </p>
                 </div>
-                <ul className="flex flex-col gap-2.5 flex-1">
+
+                <ul className="flex flex-col gap-2.5">
                   {plan.features.map((feat) => (
-                    <li key={feat} className="flex items-center gap-2.5 text-sm text-slate-300">
-                      <Check className="w-4 h-4 flex-shrink-0" style={{ color: plan.color }} />
-                      {feat}
+                    <li key={feat} className="flex items-start gap-2.5">
+                      <Check
+                        className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
+                          plan.highlighted ? "text-indigo-200" : "text-indigo-500"
+                        }`}
+                      />
+                      <span
+                        className={`text-sm ${
+                          plan.highlighted ? "text-indigo-100" : "text-[#6B6560]"
+                        }`}
+                      >
+                        {feat}
+                      </span>
                     </li>
                   ))}
                 </ul>
+
                 <Link
                   href="/dashboard"
-                  className={`mt-2 w-full text-center py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                    plan.highlight
-                      ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:shadow-[0_0_32px_rgba(99,102,241,0.6)]"
-                      : "bg-white/5 hover:bg-white/10 border border-white/10 text-white"
+                  className={`mt-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                    plan.highlighted
+                      ? "bg-white text-indigo-600 hover:bg-indigo-50"
+                      : "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-[0_4px_16px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_24px_rgba(99,102,241,0.5)] hover:scale-[1.02]"
                   }`}
                 >
                   {plan.cta}
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
             ))}
@@ -606,47 +710,40 @@ export default function HomePage() {
       </section>
 
       {/* ── CTA Banner ───────────────────────────────────────────────────── */}
-      <section id="contact" className="py-24 md:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeIn}
-            className="relative rounded-3xl bg-gradient-to-br from-indigo-600/30 via-indigo-500/10 to-cyan-500/20 border border-indigo-500/20 p-12 md:p-16 text-center overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.3),0_32px_80px_-16px_rgba(99,102,241,0.2)]"
-          >
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-600/20 rounded-full blur-[80px]" />
-            </div>
-            <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="relative">
-              <motion.p variants={fadeInUp} className="text-xs font-semibold text-indigo-300 uppercase tracking-widest mb-4">
-                {t("cta.label")}
-              </motion.p>
-              <motion.h2 variants={fadeInUp} className="text-3xl md:text-4xl font-extrabold tracking-tight text-balance mb-5">
-                {t("cta.title")}
-              </motion.h2>
-              <motion.p variants={fadeInUp} className="text-slate-400 text-lg max-w-lg mx-auto mb-10 text-pretty">
-                {t("cta.body")}
-              </motion.p>
-              <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-sm transition-all duration-300 shadow-[0_0_24px_rgba(99,102,241,0.5)] hover:shadow-[0_0_40px_rgba(99,102,241,0.7)] hover:-translate-y-0.5"
-                >
-                  {t("cta.button_primary")}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/analytics"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  {t("cta.button_secondary")}
-                </Link>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
+      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-[#FAF7F2]">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={scaleIn}
+          className="max-w-3xl mx-auto text-center"
+        >
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-[#1E1B18] mb-5">
+            Ready to see the full picture?
+          </h2>
+          <p className="text-lg text-[#6B6560] mb-8">
+            Join thousands of SaaS teams who use Pulse to make faster, smarter
+            decisions every day.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-semibold text-base shadow-[0_4px_24px_rgba(99,102,241,0.4)] hover:shadow-[0_6px_32px_rgba(99,102,241,0.55)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            >
+              Start for free
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/analytics"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl border border-black/15 text-[#1E1B18] font-semibold text-base hover:bg-black/5 transition-all duration-200"
+            >
+              Explore analytics
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </motion.div>
       </section>
-    </main>
+
+    </div>
   );
 }

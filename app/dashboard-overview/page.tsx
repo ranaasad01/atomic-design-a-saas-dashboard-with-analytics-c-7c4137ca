@@ -105,164 +105,79 @@ const kpis = [
   },
   {
     label: "Avg. Session",
-    value: "6m 42s",
-    change: 9.3,
-    icon: Eye,
+    value: "4m 12s",
+    change: 5.8,
+    icon: Clock,
     color: "#10B981",
     glow: "rgba(16,185,129,0.3)",
-    sub: "vs last month",
+    sub: "vs last week",
   },
 ];
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Status Badge ─────────────────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
-    paid: {
-      label: "Paid",
-      cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-      icon: <CheckCircle className="w-3 h-3" />,
-    },
-    pending: {
-      label: "Pending",
-      cls: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-      icon: <Clock className="w-3 h-3" />,
-    },
-    failed: {
-      label: "Failed",
-      cls: "bg-red-500/10 text-red-400 border-red-500/20",
-      icon: <AlertCircle className="w-3 h-3" />,
-    },
+  const map: Record<string, { label: string; cls: string; icon: React.ElementType }> = {
+    paid: { label: "Paid", cls: "bg-emerald-50 text-emerald-600", icon: CheckCircle },
+    pending: { label: "Pending", cls: "bg-amber-50 text-amber-600", icon: Clock },
+    failed: { label: "Failed", cls: "bg-red-50 text-red-600", icon: AlertCircle },
   };
-  const s = map[status] ?? map["pending"];
+  const cfg = map[status] ?? map["pending"];
+  const Icon = cfg.icon;
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${s.cls}`}>
-      {s.icon}
-      {s.label}
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${cfg.cls}`}>
+      <Icon className="w-3 h-3" />
+      {cfg.label}
     </span>
   );
 }
 
-function PlanBadge({ plan }: { plan: string }) {
-  const color = PLAN_COLORS[plan] ?? "#6366F1";
-  return (
-    <span
-      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border"
-      style={{
-        backgroundColor: `${color}18`,
-        color,
-        borderColor: `${color}30`,
-      }}
-    >
-      {plan}
-    </span>
-  );
-}
+// ─── Custom Tooltip ───────────────────────────────────────────────────────────
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
-  label?: string;
-}) => {
-  if (!active || !payload || payload.length === 0) return null;
-  return (
-    <div className="bg-[#1E293B] border border-white/10 rounded-xl p-3 shadow-[0_8px_32px_rgba(0,0,0,0.4)] text-sm">
-      <p className="text-slate-400 mb-2 font-medium">{label}</p>
-      {payload.map((entry) => (
-        <div key={entry.name} className="flex items-center gap-2 mb-1">
-          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-          <span className="text-slate-300 capitalize">{entry.name}:</span>
-          <span className="text-white font-semibold">
-            {typeof entry.value === "number"
-              ? entry.name === "revenue" || entry.name === "expenses" || entry.name === "profit"
-                ? `$${(entry.value ?? 0).toLocaleString("en-US")}`
-                : (entry.value ?? 0).toLocaleString("en-US")
-              : entry.value}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
+const tooltipStyle = {
+  contentStyle: {
+    background: "#FFFFFF",
+    border: "1px solid rgba(0,0,0,0.08)",
+    borderRadius: "12px",
+    color: "#1E1B18",
+    fontSize: "12px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+  },
+  labelStyle: { color: "#1E1B18", fontWeight: 600, marginBottom: 4 },
+  itemStyle: { color: "#1E1B18" },
 };
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DashboardOverviewPage() {
   const t = useTranslations();
-  const [activeChart, setActiveChart] = useState<"revenue" | "users">("revenue");
-  const [selectedPeriod, setSelectedPeriod] = useState<"7d" | "30d" | "90d" | "1y">("1y");
-
-  const periods: Array<{ key: "7d" | "30d" | "90d" | "1y"; label: string }> = [
-    { key: "7d", label: "7D" },
-    { key: "30d", label: "30D" },
-    { key: "90d", label: "90D" },
-    { key: "1y", label: "1Y" },
-  ];
+  const [activeTab, setActiveTab] = useState<"revenue" | "expenses" | "profit">("revenue");
 
   return (
-    <main className="min-h-screen bg-[#0A0F1E] text-[#F8FAFC]">
-      {/* Ambient glow */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[400px] bg-indigo-600/8 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[300px] bg-cyan-500/6 rounded-full blur-[100px]" />
-      </div>
+    <div className="min-h-screen bg-[#FAF7F2] pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-        {/* ── Page Header ── */}
+        {/* Header */}
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={staggerContainer}
-          className="mb-10"
+          variants={fadeInUp}
+          className="mb-8"
         >
-          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-white">
-                {t("dashboardOverview.title")}
-              </h1>
-              <p className="mt-1 text-slate-400 text-sm">
-                {t("dashboardOverview.subtitle")}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
-                {periods.map((p) => (
-                  <button
-                    key={p.key}
-                    onClick={() => setSelectedPeriod(p.key)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                      selectedPeriod === p.key
-                        ? "bg-indigo-500 text-white shadow-[0_0_12px_rgba(99,102,241,0.4)]"
-                        : "text-slate-400 hover:text-white"
-                    }`}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white text-sm font-semibold transition-all duration-200 shadow-[0_0_20px_rgba(99,102,241,0.35)]"
-              >
-                <Zap className="w-3.5 h-3.5" />
-                {t("dashboardOverview.exportBtn")}
-              </motion.button>
-            </div>
-          </motion.div>
+          <h1 className="text-3xl font-bold text-[#1E1B18] tracking-tight">
+            Dashboard Overview
+          </h1>
+          <p className="mt-1 text-sm text-[#6B6560]">
+            A high-level snapshot of your business performance.
+          </p>
         </motion.div>
 
-        {/* ── KPI Cards ── */}
+        {/* KPI Cards */}
         <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         >
           {kpis.map((kpi) => {
             const Icon = kpi.icon;
@@ -271,78 +186,68 @@ export default function DashboardOverviewPage() {
               <motion.div
                 key={kpi.label}
                 variants={scaleIn}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="relative bg-[#111827]/80 border border-white/8 rounded-2xl p-5 overflow-hidden group cursor-default"
-                style={{
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.08), 0 8px 24px -8px rgba(0,0,0,0.2)",
-                }}
+                className="bg-white border border-black/8 shadow-sm rounded-2xl p-5 flex flex-col gap-3"
               >
-                {/* Glow on hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
-                  style={{
-                    background: `radial-gradient(ellipse at top left, ${kpi.glow} 0%, transparent 60%)`,
-                  }}
-                />
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-4">
-                    <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center"
-                      style={{ backgroundColor: `${kpi.color}18`, border: `1px solid ${kpi.color}30` }}
-                    >
-                      <Icon className="w-5 h-5" style={{ color: kpi.color }} />
-                    </div>
-                    <span
-                      className={`flex items-center gap-0.5 text-xs font-semibold px-2 py-1 rounded-full ${
-                        isPositive
-                          ? "bg-emerald-500/10 text-emerald-400"
-                          : "bg-red-500/10 text-red-400"
-                      }`}
-                    >
-                      {isPositive ? (
-                        <ArrowUpRight className="w-3 h-3" />
-                      ) : (
-                        <ArrowDownRight className="w-3 h-3" />
-                      )}
-                      {Math.abs(kpi.change)}%
-                    </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-[#6B6560] uppercase tracking-wider">
+                    {kpi.label}
+                  </span>
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: `${kpi.color}20` }}
+                  >
+                    <Icon className="w-4 h-4" style={{ color: kpi.color }} />
                   </div>
-                  <p className="text-2xl font-bold text-white tracking-tight">{kpi.value}</p>
-                  <p className="text-sm text-slate-400 mt-0.5">{kpi.label}</p>
-                  <p className="text-xs text-slate-600 mt-1">{kpi.sub}</p>
+                </div>
+                <div className="text-2xl font-bold text-[#1E1B18] tracking-tight">
+                  {kpi.value}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`inline-flex items-center gap-0.5 text-xs font-semibold ${
+                      isPositive ? "text-emerald-600" : "text-red-500"
+                    }`}
+                  >
+                    {isPositive ? (
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    ) : (
+                      <ArrowDownRight className="w-3.5 h-3.5" />
+                    )}
+                    {Math.abs(kpi.change)}%
+                  </span>
+                  <span className="text-xs text-[#6B6560]">{kpi.sub}</span>
                 </div>
               </motion.div>
             );
           })}
         </motion.div>
 
-        {/* ── Main Chart + Pie ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
-          {/* Area / Bar Chart */}
+        {/* Charts Row 1: Revenue + User Growth */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"
+        >
+          {/* Revenue Chart */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
             variants={fadeInUp}
-            className="xl:col-span-2 bg-[#111827]/80 border border-white/8 rounded-2xl p-6"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 8px 32px -8px rgba(0,0,0,0.25)" }}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-base font-semibold text-white">
-                  {t("dashboardOverview.chartTitle")}
-                </h2>
-                <p className="text-xs text-slate-500 mt-0.5">{t("dashboardOverview.chartSub")}</p>
+                <h2 className="text-base font-semibold text-[#1E1B18]">Revenue Overview</h2>
+                <p className="text-xs text-[#6B6560] mt-0.5">Monthly revenue, expenses & profit</p>
               </div>
-              <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
-                {(["revenue", "users"] as const).map((tab) => (
+              <div className="flex items-center gap-1 bg-[#F3EFE8] rounded-lg p-1">
+                {(["revenue", "expenses", "profit"] as const).map((tab) => (
                   <button
                     key={tab}
-                    onClick={() => setActiveChart(tab)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all duration-200 ${
-                      activeChart === tab
-                        ? "bg-white/10 text-white"
-                        : "text-slate-500 hover:text-slate-300"
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium capitalize transition-all duration-200 ${
+                      activeTab === tab
+                        ? "bg-white text-[#1E1B18] shadow-sm"
+                        : "text-[#6B6560] hover:text-[#1E1B18]"
                     }`}
                   >
                     {tab}
@@ -350,288 +255,299 @@ export default function DashboardOverviewPage() {
                 ))}
               </div>
             </div>
-
-            <ResponsiveContainer width="100%" height={280}>
-              {activeChart === "revenue" ? (
-                <AreaChart data={revenueData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366F1" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="gradProfit" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22D3EE" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="#22D3EE" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="month" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="revenue" stroke="#6366F1" strokeWidth={2} fill="url(#gradRevenue)" dot={false} activeDot={{ r: 5, fill: "#6366F1" }} />
-                  <Area type="monotone" dataKey="profit" stroke="#22D3EE" strokeWidth={2} fill="url(#gradProfit)" dot={false} activeDot={{ r: 5, fill: "#22D3EE" }} />
-                </AreaChart>
-              ) : (
-                <BarChart data={userGrowthData} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                  <XAxis dataKey="week" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="active" fill="#6366F1" radius={[4, 4, 0, 0]} maxBarSize={32} />
-                  <Bar dataKey="new" fill="#22D3EE" radius={[4, 4, 0, 0]} maxBarSize={32} />
-                </BarChart>
-              )}
+            <ResponsiveContainer width="100%" height={220}>
+              <AreaChart data={revenueData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366F1" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="profGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                />
+                <Tooltip
+                  {...tooltipStyle}
+                  formatter={(value: number) => [`$${value.toLocaleString("en-US")}`, ""]}
+                />
+                {activeTab === "revenue" && (
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#6366F1"
+                    strokeWidth={2}
+                    fill="url(#revGrad)"
+                    dot={false}
+                    activeDot={{ r: 4, fill: "#6366F1" }}
+                  />
+                )}
+                {activeTab === "expenses" && (
+                  <Area
+                    type="monotone"
+                    dataKey="expenses"
+                    stroke="#F59E0B"
+                    strokeWidth={2}
+                    fill="url(#expGrad)"
+                    dot={false}
+                    activeDot={{ r: 4, fill: "#F59E0B" }}
+                  />
+                )}
+                {activeTab === "profit" && (
+                  <Area
+                    type="monotone"
+                    dataKey="profit"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    fill="url(#profGrad)"
+                    dot={false}
+                    activeDot={{ r: 4, fill: "#10B981" }}
+                  />
+                )}
+              </AreaChart>
             </ResponsiveContainer>
-
-            {/* Legend */}
-            <div className="flex items-center gap-5 mt-4">
-              {activeChart === "revenue" ? (
-                <>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-3 h-0.5 bg-indigo-500 rounded-full inline-block" />
-                    Revenue
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-3 h-0.5 bg-cyan-400 rounded-full inline-block" />
-                    Profit
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-3 h-2 bg-indigo-500 rounded-sm inline-block" />
-                    Active Users
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-3 h-2 bg-cyan-400 rounded-sm inline-block" />
-                    New Users
-                  </span>
-                </>
-              )}
-            </div>
           </motion.div>
 
-          {/* Pie Chart — Plan Breakdown */}
+          {/* User Growth Chart */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
             variants={fadeInUp}
-            className="bg-[#111827]/80 border border-white/8 rounded-2xl p-6"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 8px 32px -8px rgba(0,0,0,0.25)" }}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
           >
-            <h2 className="text-base font-semibold text-white mb-1">
-              {t("dashboardOverview.planTitle")}
-            </h2>
-            <p className="text-xs text-slate-500 mb-5">{t("dashboardOverview.planSub")}</p>
-
-            <ResponsiveContainer width="100%" height={180}>
-              <PieChart>
-                <Pie
-                  data={planData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={52}
-                  outerRadius={80}
-                  paddingAngle={3}
-                  dataKey="value"
-                  strokeWidth={0}
-                >
-                  {planData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: number) => [`${value}%`, "Share"]}
-                  contentStyle={{
-                    background: "#1E293B",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: "12px",
-                    color: "#F8FAFC",
-                    fontSize: "12px",
-                  }}
+            <div className="mb-4">
+              <h2 className="text-base font-semibold text-[#1E1B18]">User Growth</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Weekly active, new & churned users</p>
+            </div>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={userGrowthData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" vertical={false} />
+                <XAxis
+                  dataKey="week"
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
                 />
-              </PieChart>
+                <YAxis
+                  tick={{ fill: "#9C9590", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip {...tooltipStyle} />
+                <Bar dataKey="active" fill="#6366F1" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                <Bar dataKey="new" fill="#22D3EE" radius={[4, 4, 0, 0]} maxBarSize={24} />
+                <Bar dataKey="churned" fill="#F59E0B" radius={[4, 4, 0, 0]} maxBarSize={24} />
+              </BarChart>
             </ResponsiveContainer>
-
-            <div className="space-y-2.5 mt-4">
-              {planData.map((p) => (
-                <div key={p.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
-                    <span className="text-sm text-slate-300">{p.name}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-20 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${p.value}%`, backgroundColor: p.color }}
-                      />
-                    </div>
-                    <span className="text-sm font-semibold text-white w-8 text-right">{p.value}%</span>
-                  </div>
+            <div className="flex items-center gap-4 mt-3">
+              {[
+                { label: "Active", color: "#6366F1" },
+                { label: "New", color: "#22D3EE" },
+                { label: "Churned", color: "#F59E0B" },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: item.color }} />
+                  <span className="text-xs text-[#6B6560]">{item.label}</span>
                 </div>
               ))}
             </div>
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* ── Transactions + Top Pages ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
-          {/* Transactions Table */}
+        {/* Charts Row 2: Plan Breakdown + Top Pages */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"
+        >
+          {/* Plan Breakdown */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
             variants={fadeInUp}
-            className="xl:col-span-3 bg-[#111827]/80 border border-white/8 rounded-2xl overflow-hidden"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 8px 32px -8px rgba(0,0,0,0.25)" }}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
-              <div>
-                <h2 className="text-base font-semibold text-white">{t("dashboardOverview.txTitle")}</h2>
-                <p className="text-xs text-slate-500 mt-0.5">{t("dashboardOverview.txSub")}</p>
-              </div>
-              <button className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors duration-200">
-                {t("dashboardOverview.viewAll")}
-              </button>
+            <div className="mb-4">
+              <h2 className="text-base font-semibold text-[#1E1B18]">Plan Breakdown</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Subscription distribution by plan</p>
             </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-white/5">
-                    <th className="text-left text-xs font-medium text-slate-500 px-6 py-3">{t("dashboardOverview.colCustomer")}</th>
-                    <th className="text-left text-xs font-medium text-slate-500 px-3 py-3 hidden sm:table-cell">{t("dashboardOverview.colPlan")}</th>
-                    <th className="text-right text-xs font-medium text-slate-500 px-3 py-3">{t("dashboardOverview.colAmount")}</th>
-                    <th className="text-left text-xs font-medium text-slate-500 px-3 py-3 hidden md:table-cell">{t("dashboardOverview.colStatus")}</th>
-                    <th className="text-left text-xs font-medium text-slate-500 px-6 py-3 hidden lg:table-cell">{t("dashboardOverview.colDate")}</th>
-                  </tr>
-                </thead>
-                <motion.tbody initial="hidden" animate="visible" variants={staggerContainer}>
-                  {(recentTransactions ?? []).map((tx) => (
-                    <motion.tr
-                      key={tx.id}
-                      variants={fadeIn}
-                      whileHover={{ backgroundColor: "rgba(255,255,255,0.02)" }}
-                      className="border-b border-white/5 last:border-0 transition-colors duration-150"
-                    >
-                      <td className="px-6 py-3.5">
-                        <div>
-                          <p className="font-medium text-white text-sm">{tx.customer}</p>
-                          <p className="text-xs text-slate-500">{tx.id}</p>
-                        </div>
-                      </td>
-                      <td className="px-3 py-3.5 hidden sm:table-cell">
-                        <PlanBadge plan={tx.plan} />
-                      </td>
-                      <td className="px-3 py-3.5 text-right">
-                        <span className="font-semibold text-white">
-                          ${(tx.amount ?? 0).toLocaleString("en-US")}
-                        </span>
-                      </td>
-                      <td className="px-3 py-3.5 hidden md:table-cell">
-                        <StatusBadge status={tx.status} />
-                      </td>
-                      <td className="px-6 py-3.5 text-xs text-slate-500 hidden lg:table-cell">
-                        {tx.date}
-                      </td>
-                    </motion.tr>
-                  ))}
-                </motion.tbody>
-              </table>
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <ResponsiveContainer width={180} height={180}>
+                <PieChart>
+                  <Pie
+                    data={planData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={52}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {planData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    {...tooltipStyle}
+                    formatter={(value: number) => [`${value}%`, ""]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex flex-col gap-3 flex-1">
+                {planData.map((plan) => (
+                  <div key={plan.name} className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full"
+                        style={{ background: plan.color }}
+                      />
+                      <span className="text-sm text-[#6B6560]">{plan.name}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-24 h-1.5 rounded-full bg-black/8 overflow-hidden">
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${plan.value}%`, background: plan.color }}
+                        />
+                      </div>
+                      <span className="text-sm font-semibold text-[#1E1B18] w-8 text-right">
+                        {plan.value}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
 
           {/* Top Pages */}
           <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
             variants={fadeInUp}
-            className="xl:col-span-2 bg-[#111827]/80 border border-white/8 rounded-2xl p-6"
-            style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 8px 32px -8px rgba(0,0,0,0.25)" }}
+            className="bg-white border border-black/8 shadow-sm rounded-2xl p-6"
           >
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <h2 className="text-base font-semibold text-white">{t("dashboardOverview.pagesTitle")}</h2>
-                <p className="text-xs text-slate-500 mt-0.5">{t("dashboardOverview.pagesSub")}</p>
-              </div>
-              <ShoppingCart className="w-4 h-4 text-slate-600" />
+            <div className="mb-4">
+              <h2 className="text-base font-semibold text-[#1E1B18]">Top Pages</h2>
+              <p className="text-xs text-[#6B6560] mt-0.5">Most visited pages this month</p>
             </div>
-
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-              className="space-y-4"
-            >
-              {(topPages ?? []).map((page, idx) => {
+            <div className="space-y-3">
+              {topPages.map((page, i) => {
                 const isPositive = page.change >= 0;
-                const maxViews = topPages[0]?.views ?? 1;
-                const pct = Math.round(((page.views ?? 0) / maxViews) * 100);
+                const maxViews = topPages[0].views;
                 return (
-                  <motion.div key={page.path} variants={fadeInUp} className="group">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-600 w-4">{idx + 1}</span>
-                        <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors duration-200">
-                          {page.path}
-                        </span>
+                  <div key={page.path} className="flex items-center gap-3">
+                    <span className="text-xs font-medium text-[#6B6560] w-4">{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-[#1E1B18] truncate">{page.path}</span>
+                        <div className="flex items-center gap-2 ml-2 shrink-0">
+                          <span className="text-xs text-[#6B6560]">
+                            {page.views.toLocaleString("en-US")}
+                          </span>
+                          <span
+                            className={`text-xs font-semibold ${
+                              isPositive ? "text-emerald-600" : "text-red-500"
+                            }`}
+                          >
+                            {isPositive ? "+" : ""}{page.change}%
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-white">
-                          {(page.views ?? 0).toLocaleString("en-US")}
-                        </span>
-                        <span
-                          className={`flex items-center gap-0.5 text-xs font-medium ${
-                            isPositive ? "text-emerald-400" : "text-red-400"
-                          }`}
-                        >
-                          {isPositive ? (
-                            <TrendingUp className="w-3 h-3" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3" />
-                          )}
-                          {Math.abs(page.change)}%
-                        </span>
+                      <div className="h-1.5 rounded-full bg-black/8 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400"
+                          style={{ width: `${(page.views / maxViews) * 100}%` }}
+                        />
                       </div>
                     </div>
-                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${pct}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.7, ease: "easeOut", delay: idx * 0.08 }}
-                        className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400"
-                      />
-                    </div>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </motion.div>
-
-            {/* Quick Stats */}
-            <div className="mt-6 pt-5 border-t border-white/8 grid grid-cols-2 gap-4">
-              <div className="bg-white/3 rounded-xl p-3 border border-white/5">
-                <p className="text-xs text-slate-500 mb-1">{t("dashboardOverview.totalViews")}</p>
-                <p className="text-lg font-bold text-white">135,230</p>
-                <p className="text-xs text-emerald-400 flex items-center gap-0.5 mt-0.5">
-                  <TrendingUp className="w-3 h-3" /> 11.2%
-                </p>
-              </div>
-              <div className="bg-white/3 rounded-xl p-3 border border-white/5">
-                <p className="text-xs text-slate-500 mb-1">{t("dashboardOverview.bounceRate")}</p>
-                <p className="text-lg font-bold text-white">32.4%</p>
-                <p className="text-xs text-emerald-400 flex items-center gap-0.5 mt-0.5">
-                  <TrendingDown className="w-3 h-3" /> 2.8%
-                </p>
-              </div>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
+
+        {/* Transactions Table */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          className="bg-white border border-black/8 shadow-sm rounded-2xl overflow-hidden"
+        >
+          <div className="px-6 py-5 border-b border-black/5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-[#1E1B18]">Recent Transactions</h2>
+                <p className="text-xs text-[#6B6560] mt-0.5">Latest billing activity across all accounts</p>
+              </div>
+              <button className="text-xs font-medium text-indigo-500 hover:text-indigo-600 transition-colors">
+                View all
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-black/5">
+                  {["Transaction", "Customer", "Plan", "Amount", "Status", "Date"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-6 py-3 text-left text-xs font-semibold text-[#6B6560] uppercase tracking-wider"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/5">
+                {recentTransactions.map((txn) => (
+                  <tr
+                    key={txn.id}
+                    className="hover:bg-black/[0.02] transition-colors duration-150"
+                  >
+                    <td className="px-6 py-4 text-xs font-mono text-[#6B6560]">{txn.id}</td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm font-medium text-[#1E1B18]">{txn.customer}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className="text-xs font-medium px-2 py-0.5 rounded-full"
+                        style={{
+                          background: `${PLAN_COLORS[txn.plan]}18`,
+                          color: PLAN_COLORS[txn.plan],
+                        }}
+                      >
+                        {txn.plan}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-semibold text-[#1E1B18]">
+                      ${txn.amount.toLocaleString("en-US")}
+                    </td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={txn.status} />
+                    </td>
+                    <td className="px-6 py-4 text-xs text-[#6B6560]">{txn.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
 
       </div>
-    </main>
+    </div>
   );
 }
