@@ -1,0 +1,146 @@
+{
+  "analytics": {
+    "acqSubtitle": "Track where your customers come from",
+    "acqTitle": "Acquisition Channels",
+    "allRegions": "All Regions",
+    "badge": "Live",
+    "body": "Monitor your site performance with real-time analytics and actionable insights.",
+    "bullet1": "Real-time data updates",
+    "bullet2": "Customizable date ranges",
+    "bullet3": "Export reports instantly",
+    "bullet4": "Multi-channel tracking",
+    "chart1_period": "Last 30 Days",
+    "chart1_title": "Traffic Overview",
+    "chart2_title": "Conversion Funnel",
+    "colAvgTime": "Avg. Time",
+    "colBounce": "Bounce Rate",
+    "colPage": "Page",
+    "colTrend": "Trend",
+    "colUnique": "Unique Visitors",
+    "colViews": "Page Views",
+    "cta": "Explore Full Analytics",
+    "expenses": "Expenses",
+    "label": "Analytics",
+    "liveLabel": "Live Data",
+    "margin": "Margin",
+    "netProfit": "Net Profit",
+    "pagesSubtitle": "Your most visited pages",
+    "pagesTitle": "Top Pages",
+    "revSubtitle": "Total revenue this period",
+    "revTitle": "Revenue",
+    "revenue": "Revenue",
+    "showingRows": "Showing 5 of 24",
+    "subtitle": "Get insights into your business performance",
+    "title": "Analytics Dashboard",
+    "totalExpenses": "Total Expenses",
+    "totalRevenue": "Total Revenue",
+    "viewAll": "View All",
+    "vsLastMonth": "vs. last month"
+  },
+  "cta": {
+    "body": "Start tracking your metrics today and make data-driven decisions.",
+    "button_primary": "Get Started Free",
+    "button_secondary": "Schedule Demo",
+    "label": "Ready to grow?",
+    "title": "Unlock Your Analytics Potential"
+  },
+  "dashboard": {
+    "activeUsers": "Active Users",
+    "activeUsersDesc": "Users online right now",
+    "activeUsersTrend": "+12% from yesterday",
+    "colAmount": "Amount",
+    "colDate": "Date",
+    "colPlan": "Plan",
+    "colStatus": "Status",
+    "colUser": "User",
+    "entries": "Recent Activity",
+    "planBreakdown": "Plan Distribution",
+    "planBreakdownDesc": "Active subscriptions by plan tier",
+    "recentTransactions": "Recent Transactions",
+    "revenue": "Total Revenue",
+    "revenueDesc": "Monthly recurring revenue",
+    "revenueOverTime": "Revenue Trend",
+    "subtitle": "Monitor your business metrics in real time",
+    "title": "Dashboard",
+    "transactionsDesc": "Latest customer payments"
+  },
+  "dashboardOverview": {
+    "bounceRate": "Bounce Rate",
+    "chartSub": "Track performance across key metrics",
+    "chartTitle": "Performance Overview",
+    "colAmount": "Amount",
+    "colCustomer": "Customer",
+    "colDate": "Date",
+    "colPlan": "Plan",
+    "colStatus": "Status",
+    "exportBtn": "Export",
+    "pagesSub": "Most visited pages this month",
+    "pagesTitle": "Top Pages",
+    "planSub": "Subscription breakdown by tier",
+    "planTitle": "Plans",
+    "subtitle": "Your analytics at a glance",
+    "title": "Overview",
+    "totalViews": "Total Views",
+    "txSub": "Latest customer transactions",
+    "txTitle": "Transactions",
+    "viewAll": "View All"
+  },
+  "features": {
+    "label": "Features",
+    "subtitle": "Everything you need to grow",
+    "title": "Powerful Analytics Tools"
+  },
+  "hero": {
+    "badge": "New",
+    "chart_title": "Real-Time Insights",
+    "cta_primary": "Get Started Free",
+    "cta_secondary": "Watch Demo",
+    "headline1": "Analytics Made Simple",
+    "headline2": "Track metrics that matter",
+    "headline3": "Grow with confidence",
+    "subtext": "Visualize your data, understand your customers, and scale faster.",
+    "tab_revenue": "Revenue",
+    "tab_users": "Users"
+  },
+  "pricing": {
+    "label": "Pricing",
+    "per_month": "per month",
+    "popular": "Most Popular",
+    "subtitle": "Choose the plan that fits your needs",
+    "title": "Simple, Transparent Pricing"
+  },
+  "testimonials": {
+    "label": "Testimonials",
+    "title": "Loved by Teams"
+  },
+  "users": {
+    "chart": {
+      "subtitle": "User growth over the past 12 months",
+      "title": "User Growth"
+    },
+    "filter": {
+      "plan": "Plan"
+    },
+    "kpi": {
+      "active": "Active Users",
+      "new": "New Users",
+      "total": "Total Users"
+    },
+    "search": {
+      "placeholder": "Search by name or email"
+    },
+    "subtitle": "Manage and monitor your user base",
+    "table": {
+      "email": "Email",
+      "empty": "No users found",
+      "joined": "Joined",
+      "name": "Name",
+      "of": "Of",
+      "plan": "Plan",
+      "showing": "Showing",
+      "status": "Status",
+      "users": "Users"
+    },
+    "title": "Users"
+  }
+}

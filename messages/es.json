@@ -1,0 +1,146 @@
+{
+  "analytics": {
+    "acqSubtitle": "Rastrear de dónde provienen tus clientes",
+    "acqTitle": "Canales de Adquisición",
+    "allRegions": "Todas las Regiones",
+    "badge": "En Vivo",
+    "body": "Monitorea el rendimiento de tu sitio con análisis en tiempo real e información procesable.",
+    "bullet1": "Actualizaciones de datos en tiempo real",
+    "bullet2": "Rangos de fechas personalizables",
+    "bullet3": "Exporta reportes al instante",
+    "bullet4": "Seguimiento multicanal",
+    "chart1_period": "Últimos 30 Días",
+    "chart1_title": "Resumen de Tráfico",
+    "chart2_title": "Embudo de Conversión",
+    "colAvgTime": "Tiempo Promedio",
+    "colBounce": "Tasa de Rebote",
+    "colPage": "Página",
+    "colTrend": "Tendencia",
+    "colUnique": "Visitantes Únicos",
+    "colViews": "Vistas de Página",
+    "cta": "Explorar Análisis Completo",
+    "expenses": "Gastos",
+    "label": "Análisis",
+    "liveLabel": "Datos en Vivo",
+    "margin": "Margen",
+    "netProfit": "Ganancia Neta",
+    "pagesSubtitle": "Tus páginas más visitadas",
+    "pagesTitle": "Páginas Principales",
+    "revSubtitle": "Ingresos totales en este período",
+    "revTitle": "Ingresos",
+    "revenue": "Ingresos",
+    "showingRows": "Mostrando 5 de 24",
+    "subtitle": "Obtén información sobre el rendimiento de tu negocio",
+    "title": "Panel de Análisis",
+    "totalExpenses": "Gastos Totales",
+    "totalRevenue": "Ingresos Totales",
+    "viewAll": "Ver Todo",
+    "vsLastMonth": "vs. mes anterior"
+  },
+  "cta": {
+    "body": "Comienza a rastrear tus métricas hoy y toma decisiones basadas en datos.",
+    "button_primary": "Comenzar Gratis",
+    "button_secondary": "Programar Demo",
+    "label": "¿Listo para crecer?",
+    "title": "Desbloquea tu Potencial Analítico"
+  },
+  "dashboard": {
+    "activeUsers": "Usuarios Activos",
+    "activeUsersDesc": "Usuarios en línea ahora mismo",
+    "activeUsersTrend": "+12% desde ayer",
+    "colAmount": "Monto",
+    "colDate": "Fecha",
+    "colPlan": "Plan",
+    "colStatus": "Estado",
+    "colUser": "Usuario",
+    "entries": "Actividad Reciente",
+    "planBreakdown": "Distribución de Planes",
+    "planBreakdownDesc": "Suscripciones activas por nivel de plan",
+    "recentTransactions": "Transacciones Recientes",
+    "revenue": "Ingresos Totales",
+    "revenueDesc": "Ingresos recurrentes mensuales",
+    "revenueOverTime": "Tendencia de Ingresos",
+    "subtitle": "Monitorea tus métricas de negocio en tiempo real",
+    "title": "Panel de Control",
+    "transactionsDesc": "Últimos pagos de clientes"
+  },
+  "dashboardOverview": {
+    "bounceRate": "Tasa de Rebote",
+    "chartSub": "Rastrea el desempeño en métricas clave",
+    "chartTitle": "Descripción del Desempeño",
+    "colAmount": "Monto",
+    "colCustomer": "Cliente",
+    "colDate": "Fecha",
+    "colPlan": "Plan",
+    "colStatus": "Estado",
+    "exportBtn": "Exportar",
+    "pagesSub": "Páginas más visitadas este mes",
+    "pagesTitle": "Páginas Principales",
+    "planSub": "Desglose de suscripciones por nivel",
+    "planTitle": "Planes",
+    "subtitle": "Tu análisis de un vistazo",
+    "title": "Descripción General",
+    "totalViews": "Vistas Totales",
+    "txSub": "Últimas transacciones de clientes",
+    "txTitle": "Transacciones",
+    "viewAll": "Ver Todo"
+  },
+  "features": {
+    "label": "Características",
+    "subtitle": "Todo lo que necesitas para crecer",
+    "title": "Herramientas de Análisis Potentes"
+  },
+  "hero": {
+    "badge": "Nuevo",
+    "chart_title": "Información en Tiempo Real",
+    "cta_primary": "Comenzar Gratis",
+    "cta_secondary": "Ver Demo",
+    "headline1": "Análisis Simplificado",
+    "headline2": "Rastrea las métricas que importan",
+    "headline3": "Crece con confianza",
+    "subtext": "Visualiza tus datos, comprende a tus clientes y escala más rápido.",
+    "tab_revenue": "Ingresos",
+    "tab_users": "Usuarios"
+  },
+  "pricing": {
+    "label": "Precios",
+    "per_month": "por mes",
+    "popular": "Más Popular",
+    "subtitle": "Elige el plan que se ajuste a tus necesidades",
+    "title": "Precios Simples y Transparentes"
+  },
+  "testimonials": {
+    "label": "Testimonios",
+    "title": "Amado por Equipos"
+  },
+  "users": {
+    "chart": {
+      "subtitle": "Crecimiento de usuarios en los últimos 12 meses",
+      "title": "Crecimiento de Usuarios"
+    },
+    "filter": {
+      "plan": "Plan"
+    },
+    "kpi": {
+      "active": "Usuarios Activos",
+      "new": "Usuarios Nuevos",
+      "total": "Total de Usuarios"
+    },
+    "search": {
+      "placeholder": "Buscar por nombre o correo electrónico"
+    },
+    "subtitle": "Gestiona y monitorea tu base de usuarios",
+    "table": {
+      "email": "Correo Electrónico",
+      "empty": "No se encontraron usuarios",
+      "joined": "Se Unió",
+      "name": "Nombre",
+      "of": "De",
+      "plan": "Plan",
+      "showing": "Mostrando",
+      "status": "Estado",
+      "users": "Usuarios"
+    },
+    "title": "Usuarios"
+  }
+}
