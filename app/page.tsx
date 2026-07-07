@@ -665,7 +665,10 @@ export default function HomePage() {
                   <p
                     className="text-sm font-semibold text-[#1E1B18]"
                     data-atomic-id="a1r40ck2"
-                    data-atomic-instance={__atomicIdx}>{t.name}</p>
+                    data-atomic-instance={__atomicIdx}
+                    style={__atomicIdx === 0 ? {
+                      backgroundColor: "#ef4444"
+                    } : undefined}>{t.name}</p>
                   <p
                     className="text-xs text-[#6B6560]"
                     data-atomic-id="a1r40e8k"
