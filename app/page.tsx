@@ -672,7 +672,10 @@ export default function HomePage() {
                   <p
                     className="text-xs text-[#6B6560]"
                     data-atomic-id="a1r40e8k"
-                    data-atomic-instance={__atomicIdx}>{t.role}</p>
+                    data-atomic-instance={__atomicIdx}
+                    style={__atomicIdx === 0 ? {
+                      color: "#f59e0b"
+                    } : undefined}>{t.role}</p>
                 </div>
               </div>
             </motion.div>))}
